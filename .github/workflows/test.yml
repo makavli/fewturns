@@ -1,8 +1,8 @@
 name: test
 
 # The same check as `npm run check`, on three systems, for every pull request. Its token can only read, except in
-# two jobs: `issue` may write issues and comments, to open an issue while a pull request's checks are red and close
-# it once they are green; on main, once the tests pass, `release` publishes the merged version as a release.
+# two jobs: `issue` may write issues and comments, to open an issue while the checks of a pull request or of main
+# are red and close it once they are green; on main, once the tests pass, `release` publishes the merged version.
 on:
   push:
     branches: [main]
@@ -58,11 +58,11 @@ jobs:
       - name: Every test job succeeded
         run: test "${{ needs.test.result }}" = "success"
 
-  # Red checks on a pull request open an issue linked to it; the next green run closes it, and so does closing the
-  # pull request (close-issue.yml). What stops the merge is `passed`, the check main requires: the issue is the
-  # notice, open while the checks are red. A fork's token cannot write issues: forks are left out.
+  # Red checks open an issue: one per pull request, linked to it, and one for main. The next green run closes it, and
+  # so does closing the pull request (close-issue.yml). What stops the merge is `passed`, the check main requires: the
+  # issue is the notice, open while the checks are red. A fork's token cannot write issues: forks are left out.
   issue:
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ !cancelled() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) }}
     needs: passed
     runs-on: ubuntu-latest
     timeout-minutes: 2
@@ -70,16 +70,16 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - name: Open, update or close the issue of this pull request
+      - name: Open, update or close the issue of this pull request or of main
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           RESULT: ${{ needs.passed.result }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          SHA: ${{ github.event.pull_request.head.sha }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          title="Checks failed on pull request #$PR"
+          if [ -n "$PR" ]; then title="Checks failed on pull request #$PR"; else title="Checks failed on main"; fi
           issue="$(gh api "repos/$GH_REPO/issues?state=open&labels=ci-failure&per_page=100" --jq ".[] | select(.pull_request == null and .title == \"$title\") | .number" | head -n 1)"
           if [ "$RESULT" = "success" ]; then
             if [ -n "$issue" ]; then gh issue close "$issue" --comment "Fixed: the checks on ${SHA:0:7} are green. $RUN"; fi
@@ -90,8 +90,14 @@ jobs:
             exit 0
           fi
           # A pull request closed while this run went on gets no issue: close-issue.yml has already run for it.
-          if [ "$(gh pr view "$PR" --json state --jq .state)" != "OPEN" ]; then exit 0; fi
-          gh label create ci-failure --force --color B60205 --description "The checks of a pull request are red"
+          if [ -n "$PR" ] && [ "$(gh pr view "$PR" --json state --jq .state)" != "OPEN" ]; then exit 0; fi
+          gh label create ci-failure --force --color B60205 --description "The checks of a pull request or of main are red"
+          if [ -z "$PR" ]; then
+            gh issue create --title "$title" --label ci-failure --body "The checks on main failed on ${SHA:0:7}: $RUN
+
+          No release is made while main is red. The next green run on main closes this issue."
+            exit 0
+          fi
           url="$(gh issue create --title "$title" --label ci-failure --body "The checks of #$PR failed on ${SHA:0:7}: $RUN
 
           #$PR cannot merge until its checks are green. The next green run closes this issue.")"

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.2.0-111111?style=flat-square" alt="Release v1.2.0"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.2.1-111111?style=flat-square" alt="Release v1.2.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -132,7 +132,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns@v1.2.0
+/plugin marketplace add makavli/fewturns@v1.2.1
 ```
 
 **Any other agent:** the rules are plain Markdown. Copy the block from [`skills/fewturns/RULES.md`](skills/fewturns/RULES.md) into your `AGENTS.md`.
