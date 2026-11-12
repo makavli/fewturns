@@ -1,0 +1,19 @@
+{
+  "name": "fewturns-skill",
+  "version": "1.2.0",
+  "private": true,
+  "description": "A Claude Code skill that trims what every request carries and the requests a task takes. Collects nothing.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/audit.test.mjs tests/repo.test.mjs tests/workflow.test.mjs",
+    "audit": "node skills/fewturns/scripts/audit.mjs",
+    "demo": "node tools/demo.mjs",
+    "figures": "node tools/figures.mjs",
+    "bump": "node tools/bump.mjs",
+    "check": "node tools/figures.mjs --check && npm test"
+  }
+}

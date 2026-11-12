@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "fewturns",
+  "description": "Fewturns: waiting is free, requests are not.",
+  "owner": {
+    "name": "makavli",
+    "url": "https://github.com/makavli"
+  },
+  "plugins": [
+    {
+      "name": "fewturns",
+      "description": "Trims what every Claude Code request carries and the requests a task takes. One skill, no hooks, nothing collected.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

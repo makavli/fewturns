@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 232" width="880" height="232" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title id="t">Fewturns</title>
+<desc id="d">Fewturns. Waiting is free. Requests are not. A Claude Code skill that trims what every request carries and the number of requests a task takes. It collects nothing.</desc>
+<rect x="0.5" y="0.5" width="879" height="231" rx="16" fill="#fcfcfb" stroke="rgba(11,11,11,0.10)"/>
+<rect x="64" y="64" width="80" height="80" rx="18" fill="#2a78d6"/>
+<rect x="82" y="83" width="44" height="8" rx="4" fill="#ffffff"/>
+<rect x="82" y="99" width="30" height="8" rx="4" fill="#ffffff"/>
+<rect x="82" y="115" width="18" height="8" rx="4" fill="#ffffff"/>
+<text x="172" y="112" font-size="60" font-weight="650" fill="#0b0b0b" text-anchor="start">Fewturns</text>
+<text x="174" y="146" font-size="24" font-weight="400" fill="#52514e" text-anchor="start">Waiting is free. Requests are not.</text>
+<text x="64" y="184" font-size="16" font-weight="400" fill="#52514e" text-anchor="start">A Claude Code skill that trims what every request carries, and the requests a task takes.</text>
+<text x="64" y="208" font-size="16" font-weight="400" fill="#898781" text-anchor="start">One skill. No hooks. Nothing collected, nothing sent.</text>
+</svg>

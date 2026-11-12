@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="880" height="300" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title id="t">Waiting is free, requests are not</title>
+<desc id="d">A six-minute build, two ways to wait. Checking every 30 seconds takes 12 requests. Running the build in the foreground and waiting takes 1 request, when it returns. Every request carries the whole context again.</desc>
+<rect x="0.5" y="0.5" width="879" height="299" rx="16" fill="#fcfcfb" stroke="rgba(11,11,11,0.10)"/>
+<text x="64" y="52" font-size="22" font-weight="650" fill="#0b0b0b" text-anchor="start">Waiting is free. Requests are not.</text>
+<text x="64" y="74" font-size="15" font-weight="400" fill="#52514e" text-anchor="start">A six-minute build, two ways to wait. Each dot is a request that carries the whole context again.</text>
+<line x1="240" y1="104" x2="240" y2="222" stroke="#e1e0d9"/><text x="240" y="244" font-size="13" font-weight="400" fill="#898781" text-anchor="middle">start</text>
+<line x1="396" y1="104" x2="396" y2="222" stroke="#e1e0d9"/><text x="396" y="244" font-size="13" font-weight="400" fill="#898781" text-anchor="middle">2 min</text>
+<line x1="552" y1="104" x2="552" y2="222" stroke="#e1e0d9"/><text x="552" y="244" font-size="13" font-weight="400" fill="#898781" text-anchor="middle">4 min</text>
+<line x1="708" y1="104" x2="708" y2="222" stroke="#e1e0d9"/><text x="708" y="244" font-size="13" font-weight="400" fill="#898781" text-anchor="middle">6 min</text>
+<text x="64" y="132" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="start">Polling</text>
+<text x="64" y="152" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">a check every 30 seconds</text>
+<line x1="240" y1="134" x2="708" y2="134" stroke="#e1e0d9" stroke-width="2" stroke-linecap="round"/>
+<circle cx="279" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="318" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="357" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="396" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="435" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="474" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="513" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="552" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="591" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="630" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="669" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="708" cy="134" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="736" y="140" font-size="17" font-weight="650" fill="#0b0b0b" text-anchor="start">12 requests</text>
+<text x="64" y="192" font-size="15" font-weight="600" fill="#0b0b0b" text-anchor="start">One wait</text>
+<text x="64" y="212" font-size="13" font-weight="400" fill="#52514e" text-anchor="start">foreground, long timeout</text>
+<line x1="240" y1="194" x2="708" y2="194" stroke="#e1e0d9" stroke-width="2" stroke-linecap="round"/>
+<circle cx="708" cy="194" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="736" y="200" font-size="17" font-weight="650" fill="#0b0b0b" text-anchor="start">1 request</text>
+<text x="64" y="278" font-size="13" font-weight="400" fill="#898781" text-anchor="start">The wait itself costs nothing: no tokens are spent while a command runs.</text>
+</svg>

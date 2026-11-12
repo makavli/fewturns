@@ -1,0 +1,13 @@
+{
+  "name": "fewturns",
+  "version": "1.2.0",
+  "description": "Trims what every Claude Code request carries and the requests a task takes. One skill, no hooks, nothing collected.",
+  "author": {
+    "name": "makavli",
+    "url": "https://github.com/makavli"
+  },
+  "homepage": "https://github.com/makavli/fewturns",
+  "repository": "https://github.com/makavli/fewturns",
+  "license": "MIT",
+  "keywords": ["efficiency", "tokens", "cost", "context", "settings", "productivity"]
+}

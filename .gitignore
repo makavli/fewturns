@@ -1,0 +1,16 @@
+# Dependencies and logs (the repository has no dependencies; this is for stray installs)
+node_modules/
+*.log
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets never belong here
+.env
+.env.*
+
+# Fewturns's own backups, if you try it inside this folder
+*.bak-fewturns-*

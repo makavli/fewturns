@@ -1,0 +1,17 @@
+name: A new lever
+description: A setting or habit that lowers what a request carries or the requests a task takes.
+labels: [lever]
+body:
+  - type: textarea
+    id: lever
+    attributes:
+      label: The lever
+      description: The exact setting or rule, and the Claude Code version you saw it work in.
+    validations:
+      required: true
+  - type: textarea
+    id: tradeoff
+    attributes:
+      label: What it removes and what it gives up
+    validations:
+      required: true

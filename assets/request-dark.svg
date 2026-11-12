@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 528" width="880" height="528" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title id="t">What every request carries</title>
+<desc id="d">A request, top to bottom: Claude Code's own prompt and tools; then the fixed load, resent with every request, which Fewturns trims in settings: the skill listing, the agent listing, instruction files, the memory index, MCP tool definitions and hook output; then the conversation so far, which grows with every step and which the working rules keep short; and last, your new message. Not to scale.</desc>
+<rect x="0.5" y="0.5" width="879" height="527" rx="16" fill="#1a1a19" stroke="rgba(255,255,255,0.10)"/>
+<text x="64" y="52" font-size="22" font-weight="650" fill="#f0efec" text-anchor="start">What every request carries</text>
+<text x="64" y="74" font-size="15" font-weight="400" fill="#c3c2b7" text-anchor="start">Your message is the small part. The rest is sent again each time.</text>
+<rect x="64" y="92" width="380" height="40" rx="6" fill="#383835"/>
+<text x="80" y="117" font-size="15" font-weight="500" fill="#c3c2b7" text-anchor="start">Claude Code's own prompt and tools</text>
+<rect x="64" y="138" width="380" height="40" rx="6" fill="#3987e5"/>
+<text x="80" y="163" font-size="15" font-weight="500" fill="#ffffff" text-anchor="start">Skill listing</text>
+<rect x="64" y="184" width="380" height="40" rx="6" fill="#d95926"/>
+<text x="80" y="209" font-size="15" font-weight="500" fill="#ffffff" text-anchor="start">Agent listing</text>
+<rect x="64" y="230" width="380" height="40" rx="6" fill="#199e70"/>
+<text x="80" y="255" font-size="15" font-weight="500" fill="#ffffff" text-anchor="start">Instruction files (CLAUDE.md)</text>
+<rect x="64" y="276" width="380" height="40" rx="6" fill="#c98500"/>
+<text x="80" y="301" font-size="15" font-weight="500" fill="#ffffff" text-anchor="start">Memory index</text>
+<rect x="64" y="322" width="380" height="40" rx="6" fill="#383835"/>
+<text x="80" y="347" font-size="15" font-weight="500" fill="#c3c2b7" text-anchor="start">MCP tool definitions, hook output</text>
+<rect x="64" y="368" width="380" height="72" rx="6" fill="#383835"/>
+<text x="80" y="409" font-size="15" font-weight="500" fill="#c3c2b7" text-anchor="start">The conversation so far</text>
+<rect x="64" y="446" width="380" height="32" rx="6" fill="none" stroke="#c3c2b7"/>
+<text x="80" y="467" font-size="15" font-weight="500" fill="#f0efec" text-anchor="start">Your new message</text>
+<path d="M464 94 h10 V130 h-10 M474 112 h14" fill="none" stroke="#898781" stroke-width="1"/><text x="498" y="117" font-size="15" font-weight="400" fill="#c3c2b7" text-anchor="start">Not yours to trim</text>
+<path d="M464 140 h10 V360 h-10 M474 250 h14" fill="none" stroke="#898781" stroke-width="1"/><text x="498" y="233" font-size="15" font-weight="600" fill="#f0efec" text-anchor="start">The fixed load</text>
+<text x="498" y="255" font-size="15" font-weight="400" fill="#c3c2b7" text-anchor="start">Resent with every request.</text>
+<text x="498" y="277" font-size="15" font-weight="400" fill="#c3c2b7" text-anchor="start">/fewturns trim cuts it in settings.</text>
+<path d="M464 370 h10 V438 h-10 M474 404 h14" fill="none" stroke="#898781" stroke-width="1"/><text x="498" y="398" font-size="15" font-weight="600" fill="#f0efec" text-anchor="start">Grows with every step</text>
+<text x="498" y="420" font-size="15" font-weight="400" fill="#c3c2b7" text-anchor="start">The working rules keep the steps few.</text>
+<text x="64" y="500" font-size="13" font-weight="400" fill="#898781" text-anchor="start">Not to scale.</text>
+</svg>

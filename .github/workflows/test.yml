@@ -1,0 +1,127 @@
+name: test
+
+# The same check as `npm run check`, on three systems, for every pull request. Its token can only read, except in
+# two jobs: `issue` may write issues and comments, to open an issue while a pull request's checks are red and close
+# it once they are green; on main, once the tests pass, `release` publishes the merged version as a release.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }} # a run on main publishes a release: let it finish
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['22']
+        include:
+          - os: ubuntu-latest
+            node: '20'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Every merge into main is a release, so the version must be new
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          tag="v$(node -p "require('./package.json').version")"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+            echo "::error::$tag is already released. Run: npm run bump <new version>, then write its CHANGELOG.md entry."
+            exit 1
+          fi
+      - name: Pictures are up to date
+        run: node tools/figures.mjs --check
+      - name: Tests
+        run: npm test
+
+  # One name for the rule on main to require, whatever the list of systems holds.
+  passed:
+    if: always()
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Every test job succeeded
+        run: test "${{ needs.test.result }}" = "success"
+
+  # Red checks on a pull request open an issue linked to it; the next green run closes it, and so does closing the
+  # pull request (close-issue.yml). What stops the merge is `passed`, the check main requires: the issue is the
+  # notice, open while the checks are red. A fork's token cannot write issues: forks are left out.
+  issue:
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    needs: passed
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Open, update or close the issue of this pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          RESULT: ${{ needs.passed.result }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          title="Checks failed on pull request #$PR"
+          issue="$(gh api "repos/$GH_REPO/issues?state=open&labels=ci-failure&per_page=100" --jq ".[] | select(.pull_request == null and .title == \"$title\") | .number" | head -n 1)"
+          if [ "$RESULT" = "success" ]; then
+            if [ -n "$issue" ]; then gh issue close "$issue" --comment "Fixed: the checks on ${SHA:0:7} are green. $RUN"; fi
+            exit 0
+          fi
+          if [ -n "$issue" ]; then
+            gh issue comment "$issue" --body "Still red on ${SHA:0:7}: $RUN"
+            exit 0
+          fi
+          # A pull request closed while this run went on gets no issue: close-issue.yml has already run for it.
+          if [ "$(gh pr view "$PR" --json state --jq .state)" != "OPEN" ]; then exit 0; fi
+          gh label create ci-failure --force --color B60205 --description "The checks of a pull request are red"
+          url="$(gh issue create --title "$title" --label ci-failure --body "The checks of #$PR failed on ${SHA:0:7}: $RUN
+
+          #$PR cannot merge until its checks are green. The next green run closes this issue.")"
+          gh pr comment "$PR" --body "Blocked by #${url##*/}: the checks are red. $RUN"
+
+  # Every merge into main is a release: tag the merged commit and publish its changelog entry.
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: passed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Publish this version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::package.json holds an unexpected version: $version"
+            exit 1
+          fi
+          if gh release view "v$version" > /dev/null 2>&1; then
+            echo "v$version is already published: nothing to do."
+            exit 0
+          fi
+          node tools/release-notes.mjs > "$RUNNER_TEMP/notes.md"
+          gh release create "v$version" --target "$GITHUB_SHA" --title "Fewturns $version" --notes-file "$RUNNER_TEMP/notes.md" --latest
