@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 (2026-11-12)
+
+- **A red main opens an issue too.** When the checks fail after a merge, no release is made, and the workflow now opens the issue "Checks failed on main"; the next green run on main closes it. Nothing changed in the skill.
+
 ## 1.2.0 (2026-11-12)
 
 - **Thrift is now Fewturns.** The plugin is `fewturns@fewturns`, the command `/fewturns`, the skill folder `skills/fewturns`, the repository `makavli/fewturns`, and the markers of the `CLAUDE.md` block `<!-- fewturns:start -->` and `<!-- fewturns:end -->`. Nothing else changed. `/fewturns` does not see what the old name wrote: its `undo` looks for `.bak-fewturns-*` backups and the new markers. To leave the old name, run `/thrift undo` first, then uninstall `thrift@thrift` and install `fewturns@fewturns`; or delete the old block between its `thrift:start` and `thrift:end` markers by hand, then run `/fewturns rules`.

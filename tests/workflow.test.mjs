@@ -84,6 +84,14 @@ test('a green run closes the open issue, and does nothing more when there is non
   assert.deepEqual(kinds(run(TEST, 'issue', { RESULT: 'success' })), ['api']);
 });
 
+test('a red main opens its own issue, says nothing on a pull request, and the next green run closes it', { skip }, () => {
+  const calls = run(TEST, 'issue', { RESULT: 'failure', PR: '' });
+  assert.deepEqual(kinds(calls), ['api', 'label create', 'issue create']);
+  assert.match(calls[0], /\.title == "Checks failed on main"/);
+  assert.match(calls[2], /--title Checks failed on main --label ci-failure --body The checks on main failed on abcdef1: /);
+  assert.deepEqual(kinds(run(TEST, 'issue', { RESULT: 'success', PR: '', OPEN_ISSUE: '5' })), ['api', 'issue close']);
+});
+
 test('closing a pull request closes its open issue, and does nothing more when there is none', { skip }, () => {
   const calls = run(CLOSE, 'close', { OPEN_ISSUE: '5' });
   assert.deepEqual(kinds(calls), ['api', 'issue close']);
