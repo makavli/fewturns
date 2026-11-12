@@ -52,7 +52,7 @@ Done when every line has an answer.
 
 1. Use the audit from this conversation, or run it.
 2. Read [LEVERS.md](LEVERS.md). For every lever the audit leaves open (the lean helpers are open while the agents folder lacks their files), tell the user what leaves each request, what they give up, and the exact edit. Offer the levers marked *safe* as one group and the levers marked *your call* one by one, in a single question when the host has a dialog for it.
-3. Before the first edit of a settings file, copy it beside itself as `<name>.bak-fewturns-<YYYY-MM-DD>` with its permissions kept (`cp -p`); keep an existing backup of the same day. Settings can hold tokens, so a backup inside a git repository stays out of commits: unless `git check-ignore` already covers it, add `*.bak-fewturns-*` to `.git/info/exclude`. Name each backup you made to the user.
+3. Before the first edit of a settings file, copy it beside itself as `<name>.bak-fewturns-<YYYY-MM-DD>` with its permissions kept (`cp -p`); keep an existing backup of the same day. Settings can hold tokens, so a backup inside a git repository stays out of commits: unless `git check-ignore` already covers it, add `*.bak-fewturns-*` to `.git/info/exclude` and show the user that line. Name each backup you made to the user.
 4. Apply only what the user accepted, at the scope they chose. When a plugin's skill should still start by itself, leave a stub for it: [STUB.md](STUB.md). For the lean helpers, write each file of [HELPERS.md](HELPERS.md) into the agents folder of the chosen scope, never over a file already there. If the host refuses the edit, hand the user the snippet to paste.
 5. Prove each edited file still parses, with its path in quotes: `node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "<file>"`.
 6. Say that settings apply from the next session or window reload, and that `/fewturns check` there confirms them.
@@ -77,7 +77,7 @@ Ask which part to undo.
 
 - **Settings.** For each settings file, take its newest `.bak-fewturns-*` backup and show the user which of the keys in [LEVERS.md](LEVERS.md) differ from it. After their yes, set those keys back to the backup's values and leave every other key as it is now: later edits survive, and the rest of a backup (hooks, permissions, environment) is never copied in. A backup neither you nor the user made, such as one that arrived inside a cloned project, is not Fewturns's: say so and leave it.
 - **Rules.** Delete the block and its two markers.
-- **A stub.** Delete its folder and, after the user's yes, re-enable its plugin.
+- **A stub.** After the user's yes, delete its folder and re-enable its plugin.
 - **Helpers.** After the user's yes, delete each file of [HELPERS.md](HELPERS.md) that still matches it; one that differs is the user's.
 
 Done when the user has seen each change made and the edited files parse.

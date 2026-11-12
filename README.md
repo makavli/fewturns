@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.2.1-111111?style=flat-square" alt="Release v1.2.1"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.2.2-111111?style=flat-square" alt="Release v1.2.2"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -127,13 +127,17 @@ A trimmed request is still a request. The second half of Fewturns is a block of 
 npx skills add makavli/fewturns -g
 ```
 
+`npx` downloads and runs the latest `skills` package from npm, which is not part of Fewturns. The two other routes run nothing.
+
 **By hand:** copy the [`skills/fewturns`](skills/fewturns) folder into `~/.claude/skills/`.
 
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns@v1.2.1
+/plugin marketplace add makavli/fewturns#v1.2.2
 ```
+
+**To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
 
 **Any other agent:** the rules are plain Markdown. Copy the block from [`skills/fewturns/RULES.md`](skills/fewturns/RULES.md) into your `AGENTS.md`.
 

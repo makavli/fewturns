@@ -29,7 +29,7 @@ test('one version everywhere', () => {
   assert.equal(json('.claude-plugin/plugin.json').version, version);
   assert.match(text('CHANGELOG.md'), new RegExp(`^## ${version.replaceAll('.', '\\.')} `, 'm'));
   assert.ok(text('README.md').includes(`badge/release-v${version}-`), 'the README badge names another version');
-  assert.ok(text('README.md').includes(`makavli/fewturns@v${version}\n`), 'the README pin example names another version');
+  assert.ok(text('README.md').includes(`makavli/fewturns#v${version}\n`), 'the README pin example names another version');
 });
 
 test('the plugin and its marketplace describe the same plugin', () => {

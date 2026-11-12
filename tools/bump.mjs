@@ -19,16 +19,18 @@ const old = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).vers
 const places = {
   'package.json': [`"version": "${old}"`],
   '.claude-plugin/plugin.json': [`"version": "${old}"`],
-  'README.md': [`badge/release-v${old}-`, `alt="Release v${old}"`, `makavli/fewturns@v${old}`],
+  'README.md': [`badge/release-v${old}-`, `alt="Release v${old}"`, `makavli/fewturns#v${old}`],
 };
-for (const [file, texts] of Object.entries(places)) {
+// Every file is checked before any is written, so a missing text leaves nothing half-bumped.
+const bodies = Object.entries(places).map(([file, texts]) => {
   let body = readFileSync(resolve(root, file), 'utf8');
   for (const text of texts) {
     if (!body.includes(text)) throw new Error(`${file} does not contain ${text}`);
     body = body.replace(text, text.replace(old, next));
   }
-  writeFileSync(resolve(root, file), body);
-}
+  return [file, body];
+});
+for (const [file, body] of bodies) writeFileSync(resolve(root, file), body);
 const changelog = resolve(root, 'CHANGELOG.md');
 const today = new Date().toISOString().slice(0, 10);
 writeFileSync(changelog, readFileSync(changelog, 'utf8').replace(/^# Changelog\r?\n\r?\n/, `# Changelog\n\n## ${next} (${today})\n\n- \n\n`));

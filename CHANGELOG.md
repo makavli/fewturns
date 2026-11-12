@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 (2026-11-12)
+
+- **The version pin in the README works:** `/plugin marketplace add makavli/fewturns#v1.2.2` (a `#`, not an `@`).
+- **The README says how to update**, for each of the three install routes, and that the `npx` route runs the `skills` package from npm.
+- **`/fewturns undo` asks before it deletes a stub's folder**, and `/fewturns trim` shows the line it adds to `.git/info/exclude`.
+
 ## 1.2.1 (2026-11-12)
 
 - **A red main opens an issue too.** When the checks fail after a merge, no release is made, and the workflow now opens the issue "Checks failed on main"; the next green run on main closes it. Nothing changed in the skill.
