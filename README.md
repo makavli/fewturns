@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.4.0-111111?style=flat-square" alt="Release v1.4.0"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.0-111111?style=flat-square" alt="Release v1.5.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -134,7 +134,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.4.0
+/plugin marketplace add makavli/fewturns#v1.5.0
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -149,6 +149,8 @@ The audit needs Node 20 or later and nothing else. Without Node the skill still 
 | --- | --- |
 | `/fewturns` | **Setup**, the guided path. Runs the audit, says in five plain lines what it found, takes any TRUST line first, then asks at most three questions and applies only your answers. |
 | `/fewturns audit` | Weighs the fixed load, lists the heaviest sources, the hooks and what deserves a look, and shows which levers are open. Changes nothing. |
+| `/fewturns audit owner/repo` | **Before you install.** On your yes, a web-only helper reads that GitHub repository: who owns it and how old it is, its last changes, every hook, script and MCP server it would run, and what it would add to each request. Ends with a verdict: install, read this first, or don't. |
+| `/fewturns audit owner` | A survey of an owner: their account, and up to 10 of their Claude Code plugins or skills, one line each, then the full read of the one you pick. **Costs several times a repository check.** |
 | `/fewturns trust` | Goes through each TRUST line: what it does, when it runs, what it can reach, and whether to keep it. Removes only on your yes. |
 | `/fewturns trim` | Walks through the open levers: what leaves each request, what you give up, the exact edit. Backs up each settings file first and applies only what you accept. |
 | `/fewturns rules` | Writes the working rules into your `CLAUDE.md` (every project or this one), between two markers. |
@@ -227,6 +229,7 @@ Fewturns has no telemetry, no ledger, no account and no network code, and it nev
 
 - **It reads** your Claude Code settings files, the lists of installed plugins and of their marketplaces, the headers of your skills and agents, the hook and MCP configuration (plugin files, `.mcp.json` and the server list in `~/.claude.json`), the scripts your hooks name, your `CLAUDE.md` files (their size, and whether they hold this version's rules) and your memory index. All of it locally, and it runs none of it. For `/fewturns trust`, the agent also asks your shell for one variable the script cannot read, `ANTHROPIC_BASE_URL`.
 - **It looks up, only on your yes,** the GitHub repositories your plugins update from, during `/fewturns trust`. A web-only helper reads their public pages on github.com. Their names go to GitHub, and nothing else of yours; the helper has no access to your files.
+- **Before you install,** `/fewturns audit owner/repo` (or `owner`), on your yes, has the same web-only helper read that public repository on GitHub. The name you typed is all that goes out; nothing of yours is read or sent.
 - **It prints** one report to your terminal. The audit script writes no file, opens no connection and starts no process. A test fails the build if that ever changes: [`tests/audit.test.mjs`](tests/audit.test.mjs) allows the script four read-only functions and nothing else.
 - **It changes** only what you approve, as ordinary edits you can read: settings keys, one block in `CLAUDE.md`, a stub skill, helper files. Each settings file is backed up beside itself first.
 - **It ships no hooks**, so nothing of Fewturns's runs unless you call it.

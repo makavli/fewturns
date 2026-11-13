@@ -1,6 +1,6 @@
 {
   "name": "fewturns-skill",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "description": "A Claude Code skill that trims what every request carries and the requests a task takes. Collects nothing.",
   "license": "MIT",
