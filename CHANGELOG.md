@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.5 (2026-11-13)
+
+- **Dependabot's pull requests can pass.** They bump only the pinned actions, never the version, so the "version must be new" check now skips them; merging one publishes no release (the release step skips a version that exists).
+
 ## 1.5.4 (2026-11-13)
 
 - **A failed release is red too.** The issue job now waits for `release` as well, so a release that fails on main opens the "Checks failed on main" issue instead of failing silently.
