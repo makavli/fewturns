@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.4 (2026-11-13)
+
+- **A failed release is red too.** The issue job now waits for `release` as well, so a release that fails on main opens the "Checks failed on main" issue instead of failing silently.
+- **Dependabot keeps the pinned actions fresh.** One grouped pull request a month at most for the SHA-pinned actions.
+- **A job that waits for itself fails a test.** GitHub rejects such a workflow and runs nothing; `tests/workflow.test.mjs` now catches it before the push.
+
 ## 1.5.3 (2026-11-13)
 
 - **The rules step backs up first.** `/fewturns rules` copies the file it writes to (`CLAUDE.md`, `AGENTS.md`) beside itself before the first edit, as `trim` already did for settings files.

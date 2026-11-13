@@ -103,3 +103,18 @@ test('closing a pull request closes its open issue, and does nothing more when t
 test('the scripts read their inputs from env, never from an expression', () => {
   for (const [file, job] of [[TEST, 'issue'], [CLOSE, 'close']]) assert.ok(!script(file, job).includes('${{'), `${file}, job ${job}`);
 });
+
+test('every job waits only for jobs that exist, never for itself', () => {
+  const lines = readFileSync(join(root, TEST), 'utf8').split(/\r?\n/);
+  const jobs = lines.map((l) => /^  ([\w-]+):$/.exec(l)?.[1]).filter(Boolean);
+  let job;
+  for (const l of lines) {
+    job = /^  ([\w-]+):$/.exec(l)?.[1] ?? job;
+    const m = /^    needs: \[?([^\]]+)\]?$/.exec(l);
+    if (!m) continue;
+    for (const need of m[1].split(',').map((n) => n.trim())) {
+      assert.notEqual(need, job, `${job} waits for itself`);
+      assert.ok(jobs.includes(need), `${job} waits for ${need}, which is not a job`);
+    }
+  }
+});
