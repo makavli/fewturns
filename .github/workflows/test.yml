@@ -63,7 +63,7 @@ jobs:
   # issue is the notice, open while the checks are red. A fork's token cannot write issues: forks are left out.
   issue:
     if: ${{ !cancelled() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) }}
-    needs: passed
+    needs: [passed, release]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
@@ -75,7 +75,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
-          RESULT: ${{ needs.passed.result }}
+          RESULT: ${{ needs.release.result == 'failure' && 'failure' || needs.passed.result }}   # a failed release is red too
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
