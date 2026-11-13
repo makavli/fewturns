@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.2 (2026-11-13)
+
+- **One changelog entry per version.** Four versions had a second, empty heading; they are gone, `npm run bump` no longer opens an entry that is already written, and a test fails on a repeated heading or an empty bullet.
+
 ## 1.5.1 (2026-11-13)
 
 - **`audit owner/repo` reads scripts word for word on the first pass.** The helper's brief now asks the fetch tool for each file's full text, unchanged, with no summary. A live run needed a second round without it.
@@ -9,34 +13,18 @@
 - **A marketplace is read one plugin at a time.** When a repository lists several plugins, `audit owner/repo` asks which one to read.
 - **What a plugin weighs counts its startup hook.** A `SessionStart` hook that prints a file adds that file to every request after start, `/clear` and compaction; the audit now names the file and its size and counts it in the verdict.
 
-## 1.5.1 (2026-11-13)
-
-- 
-
 ## 1.5.0 (2026-11-13)
 
 - **Audit before you install.** `/fewturns audit owner/repo` reads a GitHub repository you have not installed yet: who owns it and how old it is, its last commits and releases, every hook, script and MCP server it would run, and what its skills and agents would add to each request. It ends with a verdict: install, read this first, or don't. `/fewturns audit owner` surveys an owner's account and up to 10 of their Claude Code plugins or skills, then offers the full read of one; it costs several times a repository check, and says so before it starts.
 - **Least privilege, least cost.** Only on your yes, and only through the web-only `web-scout` helper on a small model, which cannot read your files. The name you typed is all that goes to GitHub. The audit script still has no network code and only reads.
 
-## 1.5.0 (2026-11-13)
-
-- 
-
 ## 1.4.0 (2026-11-13)
 
 - **A full trust read, on your yes.** `audit.mjs --json` now lists `reads`: every hook script and every local MCP server command in use, flagged or not. `/fewturns trust` offers once to hand that whole list to a small read-only helper, which says what each one downloads, runs, reads and sends. The script still only reads; its read-only test is unchanged.
 
-## 1.4.0 (2026-11-13)
-
-- 
-
 ## 1.3.0 (2026-11-13)
 
 - **`/fewturns trust` can check where your plugins update from.** On your yes, a web-only helper looks up each GitHub repository the last TRUST line names: its owner and how old the account is, when the repository was created, whether it is archived or moved, and its last commits and releases. Then trust says what deserves a look: a new account or repository, a move, a repository that is gone, or a large change by someone new. The repository names go to GitHub, and nothing else of yours. The audit script is unchanged and still only reads.
-
-## 1.3.0 (2026-11-13)
-
-- 
 
 ## 1.2.2 (2026-11-12)
 

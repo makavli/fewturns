@@ -135,4 +135,7 @@ test('the release text is the changelog entry of this version, and only that one
   assert.equal(notes('9.9.9', '# Changelog\n\n## 9.9.9 (2030-01-01)\n\n- New.\n\n## 9.9.8 (2029-01-01)\n\n- Old.\n').split('\n')[0], '- New.');
   assert.throws(() => notes('0.0.0'), /no entry/);
   assert.ok(text('CHANGELOG.md').indexOf(`## ${version} `) < 20, 'the newest entry is not the current version');
+  const heads = text('CHANGELOG.md').match(/^## \S+/gm);
+  assert.equal(new Set(heads).size, heads.length, 'a version has two changelog headings');
+  assert.doesNotMatch(text('CHANGELOG.md'), /^- *$/m, 'an empty changelog bullet');
 });
