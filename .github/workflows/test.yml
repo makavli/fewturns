@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Every merge into main is a release, so the version must be new
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]' # its action bumps change no shipped file: merging one releases nothing
         shell: bash
         run: |
           tag="v$(node -p "require('./package.json').version")"
