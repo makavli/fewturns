@@ -85,7 +85,7 @@ Done when every open lever is applied, declined or not applicable, and every edi
 ## rules
 
 1. Read [RULES.md](RULES.md) and ask where the rules go: every project (`~/.claude/CLAUDE.md`), this project (`CLAUDE.md`), or the rules file of another agent (`AGENTS.md`).
-2. Put the block between its two markers into that file. Where the markers already exist, replace what is between them; leave the rest of the file as it is.
+2. Before the first edit, back that file up exactly as `trim` step 3 backs up a settings file (same name pattern, same exclude). Then put the block between its two markers into that file. Where the markers already exist, replace what is between them; leave the rest of the file as it is.
 3. Work by the rules for the rest of this session.
 
 Done when the file holds exactly one block and the user knows how to remove it (`/fewturns undo`).
@@ -98,7 +98,7 @@ Run the audit and report each lever as applied, open or changed, and the rules a
 
 Ask which part to undo.
 
-- **Settings.** For each settings file, take its newest `.bak-fewturns-*` backup and show the user which of the keys in [LEVERS.md](LEVERS.md) differ from it. After their yes, set those keys back to the backup's values and leave every other key as it is now: later edits survive, and the rest of a backup (hooks, permissions, environment) is never copied in. A backup neither you nor the user made, such as one that arrived inside a cloned project, is not Fewturns's: say so and leave it.
+- **Settings.** For each settings file, take its newest `.bak-fewturns-*` backup and show the user which of the keys in [LEVERS.md](LEVERS.md) differ from it. After their yes, set those keys back to the backup's values and leave every other key as it is now: later edits survive, and the rest of a backup (hooks, permissions, environment) is never copied in. A backup neither you nor the user made, such as one that arrived inside a cloned project, is not Fewturns's: say so and leave it. A backup git tracks (`git ls-files --error-unmatch <file>` succeeds) came with the repository, never from you.
 - **Rules.** After the user's yes, delete the block and its two markers.
 - **A stub.** After the user's yes, delete its folder and re-enable its plugin.
 - **Helpers.** After the user's yes, delete each file of [HELPERS.md](HELPERS.md) that still matches it; one that differs is the user's.

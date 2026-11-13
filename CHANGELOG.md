@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.3 (2026-11-13)
+
+- **The rules step backs up first.** `/fewturns rules` copies the file it writes to (`CLAUDE.md`, `AGENTS.md`) beside itself before the first edit, as `trim` already did for settings files.
+- **Undo ignores a backup git tracks.** A `.bak-fewturns-*` file that came with a cloned repository can no longer choose the values undo restores.
+
 ## 1.5.2 (2026-11-13)
 
 - **One changelog entry per version.** Four versions had a second, empty heading; they are gone, `npm run bump` no longer opens an entry that is already written, and a test fails on a repeated heading or an empty bullet.
