@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.0-111111?style=flat-square" alt="Release v1.5.0"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.1-111111?style=flat-square" alt="Release v1.5.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -30,7 +30,7 @@ Every plugin, skill, agent, hook and connector you add to Claude Code rides alon
 
 Fewturns is one skill that deals with both. It weighs what your requests carry, trims it in your settings with your yes to each change, and leaves a short block of working rules that make a task take fewer requests. On the way it names what you installed that deserves a second look: a hook that downloads code and runs it, a server that changes under you, a setting that sends your requests somewhere else.
 
-New to Claude Code? Install it, type `/fewturns` and answer at most three questions. It is free, it needs no account and no key, and every change waits for your yes.
+New to Claude Code? Install it, type `/fewturns` and answer at most three questions, plus a yes for anything the trust check finds. It is free, it needs no account and no key, and every change waits for your yes.
 
 ## What every request carries
 
@@ -134,7 +134,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.5.0
+/plugin marketplace add makavli/fewturns#v1.5.1
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -147,7 +147,7 @@ The audit needs Node 20 or later and nothing else. Without Node the skill still 
 
 | Command | What it does |
 | --- | --- |
-| `/fewturns` | **Setup**, the guided path. Runs the audit, says in five plain lines what it found, takes any TRUST line first, then asks at most three questions and applies only your answers. |
+| `/fewturns` | **Setup**, the guided path. Runs the audit, says in five plain lines what it found, takes any TRUST line first, then asks at most three questions and applies only your answers. Each TRUST action asks its own yes. |
 | `/fewturns audit` | Weighs the fixed load, lists the heaviest sources, the hooks and what deserves a look, and shows which levers are open. Changes nothing. |
 | `/fewturns audit owner/repo` | **Before you install.** On your yes, a web-only helper reads that GitHub repository: who owns it and how old it is, its last changes, every hook, script and MCP server it would run, and what it would add to each request. Ends with a verdict: install, read this first, or don't. |
 | `/fewturns audit owner` | A survey of an owner: their account, and up to 10 of their Claude Code plugins or skills, one line each, then the full read of the one you pick. **Costs several times a repository check.** |
@@ -228,8 +228,8 @@ Its last line says where each plugin in use updates from: whoever controls that 
 Fewturns has no telemetry, no ledger, no account and no network code, and it never will have. To be exact about what it does on your machine:
 
 - **It reads** your Claude Code settings files, the lists of installed plugins and of their marketplaces, the headers of your skills and agents, the hook and MCP configuration (plugin files, `.mcp.json` and the server list in `~/.claude.json`), the scripts your hooks name, your `CLAUDE.md` files (their size, and whether they hold this version's rules) and your memory index. All of it locally, and it runs none of it. For `/fewturns trust`, the agent also asks your shell for one variable the script cannot read, `ANTHROPIC_BASE_URL`.
-- **It looks up, only on your yes,** the GitHub repositories your plugins update from, during `/fewturns trust`. A web-only helper reads their public pages on github.com. Their names go to GitHub, and nothing else of yours; the helper has no access to your files.
-- **Before you install,** `/fewturns audit owner/repo` (or `owner`), on your yes, has the same web-only helper read that public repository on GitHub. The name you typed is all that goes out; nothing of yours is read or sent.
+- **It looks up, only on your yes,** the GitHub repositories your plugins update from, during `/fewturns trust`. A web-only helper reads their public pages on `api.github.com`, `github.com` and `raw.githubusercontent.com`. Their names go to GitHub, and nothing else of yours; the helper has no access to your files.
+- **Before you install,** `/fewturns audit owner/repo` (or `owner`), on your yes, has the same web-only helper read that public repository on GitHub. The helper is told to use only the name you typed; nothing of yours is read or sent. If a script that would run can't be read that way, it offers a shallow `git clone` into a temporary folder, read by the files-only helper and then deleted; a clone runs nothing.
 - **It prints** one report to your terminal. The audit script writes no file, opens no connection and starts no process. A test fails the build if that ever changes: [`tests/audit.test.mjs`](tests/audit.test.mjs) allows the script four read-only functions and nothing else.
 - **It changes** only what you approve, as ordinary edits you can read: settings keys, one block in `CLAUDE.md`, a stub skill, helper files. Each settings file is backed up beside itself first.
 - **It ships no hooks**, so nothing of Fewturns's runs unless you call it.

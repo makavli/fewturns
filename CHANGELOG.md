@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.5.1 (2026-11-13)
+
+- **`audit owner/repo` reads scripts word for word on the first pass.** The helper's brief now asks the fetch tool for each file's full text, unchanged, with no summary. A live run needed a second round without it.
+- **`audit owner` works on large accounts.** It asks GitHub's search instead of listing a hundred repositories (a first live run on a 117-repository organization got 18 back): forks and empty repositories come from result counts, candidates from a search, and each candidate's file tree decides plugin, marketplace or skill, wherever its `SKILL.md` sits.
+- **A last resort for scripts the web won't show word for word:** on another yes, a shallow `git clone` into a temporary folder, read by the files-only `scout` and then deleted. A clone runs nothing. "Files that run" means hook scripts and MCP commands, so docs and tests no longer hold back a verdict.
+- **Review fixes:** `web-scout`'s rule now makes the one exception explicit (a public GitHub name it is asked to look up, on GitHub's hosts only); an existing `web-scout` is checked for web-only tools; after installing it, the user is told to open a new session; the repository and owner branches are labelled; setup's "three questions" counts trust's yeses apart; the exclude-file line is asked for and found with `git rev-parse`; undoing the rules asks first.
+- **A marketplace is read one plugin at a time.** When a repository lists several plugins, `audit owner/repo` asks which one to read.
+- **What a plugin weighs counts its startup hook.** A `SessionStart` hook that prints a file adds that file to every request after start, `/clear` and compaction; the audit now names the file and its size and counts it in the verdict.
+
+## 1.5.1 (2026-11-13)
+
+- 
+
 ## 1.5.0 (2026-11-13)
 
 - **Audit before you install.** `/fewturns audit owner/repo` reads a GitHub repository you have not installed yet: who owns it and how old it is, its last commits and releases, every hook, script and MCP server it would run, and what its skills and agents would add to each request. It ends with a verdict: install, read this first, or don't. `/fewturns audit owner` surveys an owner's account and up to 10 of their Claude Code plugins or skills, then offers the full read of one; it costs several times a repository check, and says so before it starts.
