@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 (2026-11-13)
+
+- **Audit before you install.** `/fewturns audit owner/repo` reads a GitHub repository you have not installed yet: who owns it and how old it is, its last commits and releases, every hook, script and MCP server it would run, and what its skills and agents would add to each request. It ends with a verdict: install, read this first, or don't. `/fewturns audit owner` surveys an owner's account and up to 10 of their Claude Code plugins or skills, then offers the full read of one; it costs several times a repository check, and says so before it starts.
+- **Least privilege, least cost.** Only on your yes, and only through the web-only `web-scout` helper on a small model, which cannot read your files. The name you typed is all that goes to GitHub. The audit script still has no network code and only reads.
+
+## 1.5.0 (2026-11-13)
+
+- 
+
 ## 1.4.0 (2026-11-13)
 
 - **A full trust read, on your yes.** `audit.mjs --json` now lists `reads`: every hook script and every local MCP server command in use, flagged or not. `/fewturns trust` offers once to hand that whole list to a small read-only helper, which says what each one downloads, runs, reads and sends. The script still only reads; its read-only test is unchanged.
