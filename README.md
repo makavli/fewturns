@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.2.2-111111?style=flat-square" alt="Release v1.2.2"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.3.0-111111?style=flat-square" alt="Release v1.3.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -134,7 +134,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.2.2
+/plugin marketplace add makavli/fewturns#v1.3.0
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -213,7 +213,7 @@ A skill is text you can read before you install it. What runs is another matter:
 
 Its last line says where each plugin in use updates from: whoever controls that repository can change what runs on your machine at the next update.
 
-`/fewturns trust` takes each line in turn and removes nothing without your yes. [TRUST.md](skills/fewturns/TRUST.md) says what each line means and how to remove what you do not want.
+`/fewturns trust` takes each line in turn and removes nothing without your yes. On another yes, it looks each GitHub repository on that last line up: who owns it, how old it is, and what its last changes were. [TRUST.md](skills/fewturns/TRUST.md) says what each line means and how to remove what you do not want.
 
 **A line is a reason to read, not a verdict:** a guard that keeps the agent away from your keys names them too. **An empty section is not a guarantee:** the check reads patterns, and code can hide. Three habits do more than any check:
 
@@ -226,6 +226,7 @@ Its last line says where each plugin in use updates from: whoever controls that 
 Fewturns has no telemetry, no ledger, no account and no network code, and it never will have. To be exact about what it does on your machine:
 
 - **It reads** your Claude Code settings files, the lists of installed plugins and of their marketplaces, the headers of your skills and agents, the hook and MCP configuration (plugin files, `.mcp.json` and the server list in `~/.claude.json`), the scripts your hooks name, your `CLAUDE.md` files (their size, and whether they hold this version's rules) and your memory index. All of it locally, and it runs none of it. For `/fewturns trust`, the agent also asks your shell for one variable the script cannot read, `ANTHROPIC_BASE_URL`.
+- **It looks up, only on your yes,** the GitHub repositories your plugins update from, during `/fewturns trust`. A web-only helper reads their public pages on github.com. Their names go to GitHub, and nothing else of yours; the helper has no access to your files.
 - **It prints** one report to your terminal. The audit script writes no file, opens no connection and starts no process. A test fails the build if that ever changes: [`tests/audit.test.mjs`](tests/audit.test.mjs) allows the script four read-only functions and nothing else.
 - **It changes** only what you approve, as ordinary edits you can read: settings keys, one block in `CLAUDE.md`, a stub skill, helper files. Each settings file is backed up beside itself first.
 - **It ships no hooks**, so nothing of Fewturns's runs unless you call it.
