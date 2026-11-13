@@ -88,7 +88,13 @@ test('the trust check names what deserves a look, in plain words', () => {
     'plugin kitchen-sink@market, hooks/setup.sh: downloads code from the internet and runs it',
     'plugin kitchen-sink@market, MCP server server-1: runs the newest version of some-mcp-server at every start',
   ]);
+  assert.deepEqual(before.reads.map((r) => `${r.where}: ${r.script?.replace(/.*\/plugins\//, '') ?? [r.command, ...r.args].join(' ')}`), [
+    'plugin kitchen-sink@market: cache/market/kitchen-sink/1.0.0/hooks/setup.sh',
+    'plugin kitchen-sink@market, MCP server server-1: npx -y some-mcp-server',
+    'plugin kitchen-sink@market, MCP server server-2: npx -y pinned-server@1.2.0',
+  ], 'every hook script and local server is listed for a full read, flagged or not');
   assert.deepEqual(trimmed.trust, [], 'a disabled plugin runs nothing');
+  assert.deepEqual(trimmed.reads, []);
   assert.match(report(before), /Plugins in use update from: market \(github example\/market\)/);
 });
 

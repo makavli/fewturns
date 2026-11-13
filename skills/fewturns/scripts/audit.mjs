@@ -308,6 +308,10 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
 
   // What deserves a look before you rely on it: hooks and the scripts they name, MCP servers, settings.
   const trust = [];
+  // Every hook script and local MCP command found, for a full read by a helper on the user's yes (`--json` only).
+  const reads = [];
+  const toRead = new Set();
+  const list = (item, key) => { if (!toRead.has(key)) { toRead.add(key); reads.push(item); } };
   // One line per place and finding, keyed by the real path: two files that print alike still get a line each.
   const seen = new Set();
   const flag = (where, says, key = where) => { if (!seen.has(`${key}\n${says}`)) { seen.add(`${key}\n${says}`); trust.push({ where, says }); } };
@@ -320,13 +324,21 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
         const at = `${where}, ${label(shown(path, root ?? project))}`;
         const bytes = fileSize(path);
         if (bytes === null) continue;
+        list({ where, script: tilde(path, home), bytes }, path);
         if (bytes > SCAN_SCRIPT) { flag(at, 'is too large to check by pattern: read it before you rely on it', path); continue; }
         const text = read(path);
         if (text !== null) for (const [says, re] of RISKS) if (re.test(text)) flag(at, says, path);
       }
     }
   };
-  const servers = (where, defs) => { for (const [name, def] of Object.entries(defs)) { const says = mcpRisk(def); if (says) flag(`${where}, MCP server ${plain(name)}`, says); } };
+  const servers = (where, defs) => {
+    for (const [name, def] of Object.entries(defs)) {
+      const at = `${where}, MCP server ${plain(name)}`;
+      const says = mcpRisk(def);
+      if (says) flag(at, says);
+      if (typeof def?.command === 'string') list({ where: at, command: label(def.command), args: asList(def.args).map((a) => label(String(a))) }, at);
+    }
+  };
   for (const s of plugins) {
     scan(`plugin ${label(s.id)}`, s.hookRuns, s.root);
     servers(`plugin ${label(s.id)}`, s.servers);
@@ -371,7 +383,7 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
     home, project, window, budget, cap, load, chars, tokens: Math.round(chars / CHARS_PER_TOKEN),
     sources: sources.map(({ label, kind, enabled, skills, commands, agents, hookCount, mcp, chars: c }) => ({ label, kind, enabled, skills: skills.length + commands.length, agents: agents.length, hooks: hookCount, mcp, chars: c }))
       .filter((s) => s.skills + s.agents + s.hooks + s.mcp > 0).sort((a, b) => b.chars - a.chars),
-    hooks, mcpServers, instructionFiles, memory, levers, trust, origins,
+    hooks, mcpServers, instructionFiles, memory, levers, trust, reads, origins,
     rulesInstalled: instructionFiles.filter((f) => f.rules).map((f) => ({ path: f.path, current: f.rules === 'current' })),
     settingsRead: settingsFiles.filter((p, i) => layers[i]),
     settingsSkipped: settingsFiles.filter((p, i) => !layers[i] && existsSync(p)),

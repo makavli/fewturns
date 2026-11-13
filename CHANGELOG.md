@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.0 (2026-11-13)
+
+- **A full trust read, on your yes.** `audit.mjs --json` now lists `reads`: every hook script and every local MCP server command in use, flagged or not. `/fewturns trust` offers once to hand that whole list to a small read-only helper, which says what each one downloads, runs, reads and sends. The script still only reads; its read-only test is unchanged.
+
+## 1.4.0 (2026-11-13)
+
+- 
+
 ## 1.3.0 (2026-11-13)
 
 - **`/fewturns trust` can check where your plugins update from.** On your yes, a web-only helper looks up each GitHub repository the last TRUST line names: its owner and how old the account is, when the repository was created, whether it is archived or moved, and its last commits and releases. Then trust says what deserves a look: a new account or repository, a move, a repository that is gone, or a large change by someone new. The repository names go to GitHub, and nothing else of yours. The audit script is unchanged and still only reads.
