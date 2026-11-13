@@ -33,5 +33,7 @@ const bodies = Object.entries(places).map(([file, texts]) => {
 for (const [file, body] of bodies) writeFileSync(resolve(root, file), body);
 const changelog = resolve(root, 'CHANGELOG.md');
 const today = new Date().toISOString().slice(0, 10);
-writeFileSync(changelog, readFileSync(changelog, 'utf8').replace(/^# Changelog\r?\n\r?\n/, `# Changelog\n\n## ${next} (${today})\n\n- \n\n`));
+const log = readFileSync(changelog, 'utf8');
+// An entry already written for this version is kept, never opened twice.
+if (!log.includes(`## ${next} `)) writeFileSync(changelog, log.replace(/^# Changelog\r?\n\r?\n/, `# Changelog\n\n## ${next} (${today})\n\n- \n\n`));
 console.log(`${old} -> ${next}. Now write the entry in CHANGELOG.md.`);
