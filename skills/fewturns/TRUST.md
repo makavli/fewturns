@@ -29,6 +29,6 @@ The audit's TRUST section names what deserves a second look in the plugins in us
 
 ## Before you install anything
 
-- Install from a public repository whose code you can read. The last line of TRUST says where each plugin in use updates from: whoever controls that repository can change what runs on your machine at the next update.
+- Install from a public repository whose code you can read. The last line of TRUST says where each plugin in use updates from: whoever controls that repository can change what runs on your machine at the next update. On your yes, `/fewturns trust` looks each GitHub repository up: who owns it, how old it is, and what its last changes were. A new account, a repository that moved or is gone, or a large change by someone new deserves a read before the next update.
 - Skills are text. One that asks for your Claude login, your Anthropic API key or a payment before it works deserves suspicion.
 - Fewer is better. Each plugin adds its listing to every request and each hook runs on your machine: install for a need, then weigh it with `/fewturns`.

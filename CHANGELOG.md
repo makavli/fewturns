@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (2026-11-13)
+
+- **`/fewturns trust` can check where your plugins update from.** On your yes, a web-only helper looks up each GitHub repository the last TRUST line names: its owner and how old the account is, when the repository was created, whether it is archived or moved, and its last commits and releases. Then trust says what deserves a look: a new account or repository, a move, a repository that is gone, or a large change by someone new. The repository names go to GitHub, and nothing else of yours. The audit script is unchanged and still only reads.
+
+## 1.3.0 (2026-11-13)
+
+- 
+
 ## 1.2.2 (2026-11-12)
 
 - **The version pin in the README works:** `/plugin marketplace add makavli/fewturns#v1.2.2` (a `#`, not an `@`).
