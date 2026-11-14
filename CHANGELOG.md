@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.7 (2026-11-14)
+
+- **The worker and the reviewer treat what they read as data,** as the two scouts already did: text in a file that tells them to do something is reported, never followed. The reviewer also answers in the shape a brief gives it. A test keeps the rule in all four helpers.
+- **The trust check reads every plugin MCP server.** A manifest's `mcpServers` list (files and inline maps mixed) is read in full, and so are the plugin's standard `.mcp.json` and `hooks/hooks.json`, which load besides what the manifest names; two servers of one name are both checked; a bundle, an address or a hooks file the check cannot read is named. Server commands and the scripts they start now go through the same patterns as hooks, and arguments that look like keys or follow a key's flag are hidden from the full-read list.
+- **`audit owner/repo` is stricter about what counts as read.** The name must be a plain GitHub name; every `web-scout.md` and `scout.md` the host could load (personal, and each project folder up to the repository root) is checked first; a file counts as read only with its first and last lines quoted and its line count; sizes come from GitHub's tree listing, so the session runs no command on a file name; the clone keeps links as plain files.
+- **Undo restores only from backups Fewturns made.** Each backup's path is listed in `~/.claude/fewturns-backups.txt`; a restore that brings back hooks, plugins or environment shows each one first; a stub is removed only while it still matches the template.
+- **The stub is pinned to the installed version** and stops with a pointer to `/fewturns trim` after an update. It refuses an unusual skill name, escapes the description, writes over only an older stub of its own, never another skill folder, and says plainly that a general-purpose helper is not held to an agent's tool list.
+- **The helpers' 200-word cap leaves out lines they are asked to quote.**
+- **The README links [Fewkit](https://github.com/makavli/fewkit),** the bundle: one marketplace with Fewturns, CodeKickoff and Wavecheck, plus Laneboard. Fewturns alone stays the whole optimization. Add one marketplace, not both: the same plugin from two marketplaces installs twice.
+
 ## 1.5.6 (2026-11-14)
 
 - **The README points newcomers to CodeKickoff,** the first-setup sibling that installs these same rules under the same markers. No change to the skill.

@@ -55,6 +55,16 @@ const read = (p) => {
 const plain = (v) => (v === undefined || typeof v === 'boolean' || (typeof v === 'number' && Number.isFinite(v)) || (typeof v === 'string' && /^[\w.[\]-]{1,40}$/.test(v)) ? v : '(unusual value)');
 // The same for a name or a path in the trust section: safe characters and no spaces, or a placeholder.
 const label = (v) => (typeof v === 'string' && /^[\w.@:/~-]{1,100}$/.test(v) ? v : '(unusual name)');
+// MCP arguments go to a helper on a full read: a value that looks like a key or follows a key's flag is hidden.
+const SECRET_FLAG = /key|token|secret|pass|auth|bearer|credential/i;
+// shortcut: a short secret after an ordinary flag (`-p hunter2`) still shows; the helper is told never to copy one.
+const TOKEN = /^(sk-|ghp_|gho_|ghs_|ghu_|github_pat_|xox[a-z]-|AKIA|AIza|glpat-)|^[A-Za-z0-9+_=]{32,}$|^(?!\.{0,2}\/)(?=[^\d]{0,200}\d)(?=[^A-Za-z]{0,200}[A-Za-z])[A-Za-z0-9+/_=-]{32,}$|^eyJ[\w-]{8,200}\.|:\/\/[^/\s]{0,200}@|^[^\s/:@]{1,200}:[^\s/@]{1,200}@/;
+const shownArgs = (args) => args.map((a, i) => {
+  const pair = /^(-{1,2}[\w.-]{1,80})=(.*)$/s.exec(a);
+  if (pair) return SECRET_FLAG.test(pair[1]) || TOKEN.test(pair[2]) ? `${pair[1]}=(hidden)` : label(a);
+  if (TOKEN.test(a) || (i > 0 && /^-/.test(args[i - 1]) && SECRET_FLAG.test(args[i - 1]))) return '(hidden)';
+  return label(a);
+});
 const positive = (v, fallback) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : fallback);
 const readJson = (p) => { try { return JSON.parse(read(p)); } catch { return null; } };
 const isDir = (p) => { try { return statSync(p).isDirectory(); } catch { return false; } };
@@ -178,14 +188,25 @@ function pluginSource(id, root) {
   const unique = (items) => [...new Map(items.map((i) => [i.name, i])).values()];
   const hooks = {};
   const hookRuns = [];
-  const hookSpecs = manifest.hooks === undefined ? ['hooks/hooks.json'] : asList(manifest.hooks);
-  for (const spec of hookSpecs) {
+  // The standard file loads besides what the manifest names, so both are read; a file named twice counts once.
+  const specs = (field, fallback) => [...new Map([fallback, ...asList(manifest[field])].map((s) => [typeof s === 'string' ? under(s) : s, s])).values()];
+  let hooksUnread = 0;
+  for (const spec of specs('hooks', 'hooks/hooks.json')) {
     const config = typeof spec === 'string' ? readJson(under(spec)) : spec;
+    if (!obj(config) && (spec !== 'hooks/hooks.json' || fileSize(under(spec)) !== null)) hooksUnread++;
     countHooks(config, hooks);
     hookRuns.push(...hookCommands(config));
   }
-  const mcp = typeof manifest.mcpServers === 'object' && manifest.mcpServers ? manifest.mcpServers : readJson(under(typeof manifest.mcpServers === 'string' ? manifest.mcpServers : '.mcp.json'));
-  const servers = obj(mcp?.mcpServers) ?? obj(mcp) ?? {};
+  // `mcpServers` may be a file, an inline map, or a list of both; a bundle or an address is not read here.
+  // A list of [name, definition]: two files may each define a server of the same name.
+  const servers = [];
+  let mcpUnread = 0;
+  for (const spec of specs('mcpServers', '.mcp.json')) {
+    const config = typeof spec === 'string' ? readJson(under(spec)) : spec;
+    const defs = obj(config?.mcpServers) ?? obj(config);
+    if (defs) servers.push(...Object.entries(defs));
+    else if (spec !== '.mcp.json' || fileSize(under(spec)) !== null) mcpUnread++;
+  }
   return {
     id,
     root,
@@ -197,7 +218,9 @@ function pluginSource(id, root) {
     hooks,
     hookRuns,
     servers,
-    mcp: Object.keys(servers).length,
+    mcpUnread,
+    hooksUnread,
+    mcp: servers.length,
   };
 }
 
@@ -316,9 +339,9 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
   const seen = new Set();
   const flag = (where, says, key = where) => { if (!seen.has(`${key}\n${says}`)) { seen.add(`${key}\n${says}`); trust.push({ where, says }); } };
   const shown = (path, root) => (root && !relative(root, path).startsWith('..') ? relative(root, path) : tilde(path, home)).split('\\').join('/');
-  const scan = (where, commands, root) => {
+  const scan = (where, commands, root, what = 'hook command') => {
     for (const command of commands) {
-      if (command.length > SCAN_COMMAND) { flag(where, 'has a hook command too long to check by pattern: read it before you rely on it'); continue; }
+      if (command.length > SCAN_COMMAND) { flag(where, `has a ${what} too long to check by pattern: read it before you rely on it`); continue; }
       for (const [says, re] of RISKS) if (re.test(command)) flag(where, says);
       for (const path of scriptsIn(command, { root, project, home })) {
         const at = `${where}, ${label(shown(path, root ?? project))}`;
@@ -331,19 +354,24 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
       }
     }
   };
-  const servers = (where, defs) => {
-    for (const [name, def] of Object.entries(defs)) {
+  const servers = (where, entries, root) => {
+    for (const [i, [name, def]] of entries.entries()) {
       const at = `${where}, MCP server ${plain(name)}`;
       const says = mcpRisk(def);
       if (says) flag(at, says);
-      if (typeof def?.command === 'string') list({ where: at, command: label(def.command), args: asList(def.args).map((a) => label(String(a))) }, at);
+      if (typeof def?.command !== 'string') continue;
+      const args = asList(def.args).map(String);
+      scan(at, [[def.command, ...args].join(' ')], root, 'server command');
+      list({ where: at, command: label(def.command), args: shownArgs(args) }, `${at}\n${i}`);
     }
   };
   for (const s of plugins) {
     scan(`plugin ${label(s.id)}`, s.hookRuns, s.root);
-    servers(`plugin ${label(s.id)}`, s.servers);
+    servers(`plugin ${label(s.id)}`, s.servers, s.root);
+    if (s.mcpUnread) flag(`plugin ${label(s.id)}`, 'has an MCP server file the check cannot read: read it before you rely on it');
+    if (s.hooksUnread) flag(`plugin ${label(s.id)}`, 'has a hooks file the check cannot read: read it before you rely on it');
   }
-  for (const [where, defs] of mcpSets) servers(where, defs);
+  for (const [where, defs] of mcpSets) servers(where, Object.entries(defs));
   const settingsNames = ['~/.claude/settings.json', '.claude/settings.json', '.claude/settings.local.json'];
   layers.forEach((layer, i) => {
     if (!layer) return;
