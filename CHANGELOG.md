@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.6 (2026-11-14)
+
+- **The README points newcomers to CodeKickoff,** the first-setup sibling that installs these same rules under the same markers. No change to the skill.
+
 ## 1.5.5 (2026-11-13)
 
 - **Dependabot's pull requests can pass.** They bump only the pinned actions, never the version, so the "version must be new" check now skips them; merging one publishes no release (the release step skips a version that exists).

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.5-111111?style=flat-square" alt="Release v1.5.5"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.6-111111?style=flat-square" alt="Release v1.5.6"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -31,6 +31,8 @@ Every plugin, skill, agent, hook and connector you add to Claude Code rides alon
 Fewturns is one skill that deals with both. It weighs what your requests carry, trims it in your settings with your yes to each change, and leaves a short block of working rules that make a task take fewer requests. On the way it names what you installed that deserves a second look: a hook that downloads code and runs it, a server that changes under you, a setting that sends your requests somewhere else.
 
 New to Claude Code? Install it, type `/fewturns` and answer at most three questions, plus a yes for anything the trust check finds. It is free, it needs no account and no key, and every change waits for your yes.
+
+Starting from zero? [CodeKickoff](https://github.com/makavli/codekickoff) does the first setup: the model and effort for your plan, the same four lean helpers, a handoff and safe points. It installs these same working rules under Fewturns' markers, so with both you never get them twice.
 
 ## What every request carries
 
@@ -134,7 +136,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.5.5
+/plugin marketplace add makavli/fewturns#v1.5.6
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
