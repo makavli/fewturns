@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.6-111111?style=flat-square" alt="Release v1.5.6"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.7-111111?style=flat-square" alt="Release v1.5.7"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -33,6 +33,8 @@ Fewturns is one skill that deals with both. It weighs what your requests carry, 
 New to Claude Code? Install it, type `/fewturns` and answer at most three questions, plus a yes for anything the trust check finds. It is free, it needs no account and no key, and every change waits for your yes.
 
 Starting from zero? [CodeKickoff](https://github.com/makavli/codekickoff) does the first setup: the model and effort for your plan, the same four lean helpers, a handoff and safe points. It installs these same working rules under Fewturns' markers, so with both you never get them twice.
+
+Fewturns alone is the whole optimization. [Fewkit](https://github.com/makavli/fewkit) is the bundle: one marketplace with Fewturns, CodeKickoff and Wavecheck (a deep check in waves before a release, which spends requests on purpose), plus Laneboard, a tray app that shows every project at a glance. Add one marketplace, Fewkit's or this one, not both: the same plugin from two marketplaces installs twice.
 
 ## What every request carries
 
@@ -136,7 +138,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.5.6
+/plugin marketplace add makavli/fewturns#v1.5.7
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -233,7 +235,7 @@ Fewturns has no telemetry, no ledger, no account and no network code, and it nev
 - **It looks up, only on your yes,** the GitHub repositories your plugins update from, during `/fewturns trust`. A web-only helper reads their public pages on `api.github.com`, `github.com` and `raw.githubusercontent.com`. Their names go to GitHub, and nothing else of yours; the helper has no access to your files.
 - **Before you install,** `/fewturns audit owner/repo` (or `owner`), on your yes, has the same web-only helper read that public repository on GitHub. The helper is told to use only the name you typed; nothing of yours is read or sent. If a script that would run can't be read that way, it offers a shallow `git clone` into a temporary folder, read by the files-only helper and then deleted; a clone runs nothing.
 - **It prints** one report to your terminal. The audit script writes no file, opens no connection and starts no process. A test fails the build if that ever changes: [`tests/audit.test.mjs`](tests/audit.test.mjs) allows the script four read-only functions and nothing else.
-- **It changes** only what you approve, as ordinary edits you can read: settings keys, one block in `CLAUDE.md`, a stub skill, helper files. Each settings file is backed up beside itself first.
+- **It changes** only what you approve, as ordinary edits you can read: settings keys, one block in `CLAUDE.md`, a stub skill, helper files. Each settings file is backed up beside itself first, and the backup's path goes on one line of `~/.claude/fewturns-backups.txt`: undo restores only from backups listed there.
 - **It ships no hooks**, so nothing of Fewturns's runs unless you call it.
 
 ## Limits
