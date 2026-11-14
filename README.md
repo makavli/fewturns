@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.6-111111?style=flat-square" alt="Release v1.5.6"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.6.0-111111?style=flat-square" alt="Release v1.6.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -18,6 +18,7 @@
   <a href="#install">Install</a> ·
   <a href="#use">Use</a> ·
   <a href="#the-working-rules">The rules</a> ·
+  <a href="#wavecheck">Wavecheck</a> ·
   <a href="#what-deserves-a-look">Trust</a> ·
   <a href="#collects-nothing">Privacy</a> ·
   <a href="#limits">Limits</a> ·
@@ -33,6 +34,8 @@ Fewturns is one skill that deals with both. It weighs what your requests carry, 
 New to Claude Code? Install it, type `/fewturns` and answer at most three questions, plus a yes for anything the trust check finds. It is free, it needs no account and no key, and every change waits for your yes.
 
 Starting from zero? [CodeKickoff](https://github.com/makavli/codekickoff) does the first setup: the model and effort for your plan, the same four lean helpers, a handoff and safe points. It installs these same working rules under Fewturns' markers, so with both you never get them twice.
+
+[Fewkit](https://github.com/makavli/fewkit) lists both in one marketplace, with a guide to how they fit together and with Laneboard, a tray app that shows every project at a glance. Add one marketplace, Fewkit's or this one, not both: the same plugin from two marketplaces installs twice.
 
 ## What every request carries
 
@@ -50,11 +53,11 @@ The part in colour is yours. Most of it arrived one install at a time and nobody
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/before-after-dark.svg">
-    <img src="assets/before-after-light.svg" width="880" alt="The fixed load on every request for a made-up setup with three plugins. Before: about 6,278 tokens. After /fewturns trim: about 4,249 tokens, the working rules included. Hooks on every prompt or tool call go from 6 to 0, MCP servers from 2 to 0, and skill descriptions are no longer cut short to fit their budget.">
+    <img src="assets/before-after-light.svg" width="880" alt="The fixed load on every request for a made-up setup with three plugins. Before: about 6,278 tokens. After /fewturns trim: about 4,370 tokens, the working rules included. Hooks on every prompt or tool call go from 6 to 0, MCP servers from 2 to 0, and skill descriptions are no longer cut short to fit their budget.">
   </picture>
 </p>
 
-This is the setup the tests use: three plugins, a few personal skills, eight synced ones. Its fixed load goes from about **6,278** to about **4,249** tokens on every request, its hooks go, and so do both lines of its TRUST section. Its skill descriptions stop being cut short. The "after" side counts the working rules Fewturns installs: they cost a little on every request, to save whole requests.
+This is the setup the tests use: three plugins, a few personal skills, eight synced ones. Its fixed load goes from about **6,278** to about **4,370** tokens on every request, its hooks go, and so do both lines of its TRUST section. Its skill descriptions stop being cut short. The "after" side counts the working rules Fewturns installs: they cost a little on every request, to save whole requests.
 
 It is an estimate of a made-up setup, not a benchmark, and your numbers will differ. Run `node tools/demo.mjs` to reproduce it, and `/fewturns` to see your own.
 
@@ -109,7 +112,7 @@ TRUST - worth a look before you rely on it (a reason to read, not a verdict)
 
 **Size is not the bill.** What a request repeats from the one before is read from a cache, at a fraction of the price, so a large context you need costs little while it stays the same. The bill grows with the number of requests, with every cache miss (a change early in the context, a switch of model, a pause longer than the cache lasts), with the output, and with the size of the model doing the work. That is why the fixed load worth cutting is the part you never use, and why the rules go after requests and hand small jobs to small models.
 
-A trimmed request is still a request. The second half of Fewturns is a block of ten working rules, written into your `CLAUDE.md`, that changes how the agent spends them. [Read the rules](#the-working-rules).
+A trimmed request is still a request. The second half of Fewturns is a block of eleven working rules, written into your `CLAUDE.md`, that changes how the agent spends them. [Read the rules](#the-working-rules).
 
 ## Install
 
@@ -136,7 +139,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.5.6
+/plugin marketplace add makavli/fewturns#v1.6.0
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -157,6 +160,7 @@ The audit needs Node 20 or later and nothing else. Without Node the skill still 
 | `/fewturns trim` | Walks through the open levers: what leaves each request, what you give up, the exact edit. Backs up each settings file first and applies only what you accept. |
 | `/fewturns rules` | Writes the working rules into your `CLAUDE.md` (every project or this one), between two markers. |
 | `/fewturns check` | In a fresh session, confirms the settings took: compares your files with what the session really loaded, and says whether your rules are this version's. |
+| `/fewturns wavecheck [target]` | **Before a release or going public.** On your yes, checks the target in waves of fresh read-only helpers, with a critic after each wave and two verifiers for each lead, and reports only what was verified. Changes nothing in the target; writes only its own run folder, outside it. [How](#wavecheck). |
 | `/fewturns undo` | Sets the settings Fewturns changed back to their backup values, or removes the rules block, a stub or the helpers. |
 
 **Run it once, then switch it off if you like.** What Fewturns does lives in your settings and your `CLAUDE.md`, not in the plugin. After setup, the plugin can be disabled and everything keeps working; enable it again for a `check` or a `trust` after you install something new.
@@ -178,6 +182,12 @@ The audit needs Node 20 or later and nothing else. Without Node the skill still 
 | Lean helpers | Four helper files that name a small model and only the tools their job needs, so each turn a helper takes costs less. [How](skills/fewturns/HELPERS.md). |
 | A lean `CLAUDE.md` and memory index | Lines that restate the code, status that grew inside an index. |
 
+### Wavecheck
+
+One review pass reads what it meets first and stops there. Wavecheck cuts the target into small units (one surface × one risk), sends waves of fresh read-only helpers over them, and after every wave a fresh critic hunts what was missed: a surface nobody read, a unit closed without evidence. When one critic and then a second, separate one find nothing, two fresh verifiers test each lead, and the report holds only what they upheld: confirmed findings with file:line and the smallest fix, what still needs validation and why, and the coverage counts.
+
+The session stays the only writer and stays small: the helpers read, and only one line of JSON per unit comes back. Nothing of the target runs, nothing in it changes, and every helper is told the target may be hostile. The run's notes live in one folder outside the repository, never committed. The working rules offer a Wavecheck at a release, before a repository goes public and after work that touched a trust boundary, marked Recommended or Not recommended, with its cost: about two dozen helper calls for a small app. The full run is [`WAVECHECK.md`](skills/fewturns/WAVECHECK.md).
+
 ## The working rules
 
 This is the block `/fewturns rules` installs, in full. It is short on purpose: it is loaded in every session, so it pays its own way.
@@ -190,6 +200,7 @@ This is the block `/fewturns rules` installs, in full. It is short on purpose: i
 > - **Clean up.** Stop each background task, monitor or scheduled job as soon as its news has arrived. Schedule a check only on request: one job, at the pace the watched thing changes, deleting itself when done.
 > - **A tool beats a one-liner.** A check worth running twice becomes a small script in the repository, run as one command.
 > - **Helpers that pay.** Hand a subagent a bounded job that would flood this context: a wide search, a review of a finished diff, an audit. On every call, name the smallest model that can do the job: a built-in helper may otherwise run on this session's model. As few helpers as the job needs, one shared brief, a short report, one writer per file. A small job stays inline, and so does work that needs the machine to itself (a build, an editor, a render).
+> - **Wavecheck.** At a release, a repository going public, a request to audit everything, or the end of work that touched a trust boundary (outside input, processes, credentials, CI), offer one in a dialog, Recommended or Not recommended, with the reason and its cost: waves of fresh read-only helpers, a critic after each, two verifiers per lead, verified findings only. It runs as `/fewturns wavecheck`; without Fewturns, or for a small or docs-only change, offer one reviewer instead.
 > - **Skills by need.** Load and run the skill the task calls for, never apply one from memory; name the ones used in one line.
 > - **Local first.** Test on this machine; let CI run to publish.
 > - **Lean index.** Always-loaded files (this one, the memory index) hold short pointers; status and history live in the file a pointer names. A handoff page read at every start holds the state now: each update rewrites it and drops what is no longer true.
@@ -258,12 +269,13 @@ npm run demo      # the before-and-after audit of the test fixture
 No dependencies to install. The layout:
 
 ```text
-skills/fewturns/SKILL.md           the skill: setup, audit, trust, trim, rules, check, undo
+skills/fewturns/SKILL.md           the skill: setup, audit, trust, trim, rules, check, wavecheck, undo
 skills/fewturns/LEVERS.md          every lever, its edit and its price
 skills/fewturns/HELPERS.md         four lean helpers, and why they pay
 skills/fewturns/RULES.md           the working rules block
 skills/fewturns/STUB.md            the on-demand stub for a disabled plugin
 skills/fewturns/TRUST.md           what each TRUST line means, and how to remove it
+skills/fewturns/WAVECHECK.md       the check in waves: when to offer it, who does what, the run
 skills/fewturns/scripts/audit.mjs  the read-only audit
 tests/                           the audit's tests and the repository's own checks
 tools/                           the demo, the picture generator, the version and release helpers

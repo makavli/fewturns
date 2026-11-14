@@ -7,7 +7,7 @@ description: >
   second look, trims settings with the user's yes, and installs working rules.
   Use when sessions feel slow or costly, limits hit, or before or after
   installing a plugin.
-argument-hint: "[setup|audit [owner[/repo]]|trust|trim|rules|check|undo]"
+argument-hint: "[setup|audit [owner[/repo]]|trust|trim|rules|check|wavecheck [target]|undo]"
 license: MIT
 ---
 
@@ -93,6 +93,14 @@ Done when the file holds exactly one block and the user knows how to remove it (
 ## check
 
 Run the audit and report each lever as applied, open or changed, and the rules as current or differing from this version (`/fewturns rules` updates them). Then compare the files with what this session loaded: the skill listing, the agent list, connector tools and hook output in your context. Name the levers a session cannot see from inside (effort, compaction, background calls) as confirmed in the file only.
+
+## wavecheck
+
+A check in waves, for a release, a repository going public, or work that touched a trust boundary: the target is cut into small units, fresh read-only helpers cover them wave after wave, a critic hunts the gaps after each wave, and two verifiers test each lead. The argument names the target (a folder, a diff, a pull request; a diff is saved in the run folder, never in the repository); without one, ask.
+
+Read [WAVECHECK.md](WAVECHECK.md) and follow it. Before the first helper goes out, say in one dialog what runs and what it costs, marked Recommended or Not recommended, and wait for a yes.
+
+Done when WAVECHECK.md's run is done, or the user declined it. Nothing in the target changes.
 
 ## undo
 

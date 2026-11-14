@@ -58,7 +58,7 @@ test('the rules block has its two markers, once each', () => {
 
 test('the README quotes the rules as RULES.md has them', () => {
   const rules = text('skills/fewturns/RULES.md').split('<!-- fewturns:start -->')[1].split('<!-- fewturns:end -->')[0].split(/\r?\n/).filter((l) => l.startsWith('- '));
-  assert.equal(rules.length, 10);
+  assert.equal(rules.length, 11);
   const readme = text('README.md').split(/\r?\n/);
   for (const rule of rules) assert.ok(readme.includes(`> ${rule}`), `README differs on: ${rule.slice(0, 40)}`);
 });
@@ -78,6 +78,21 @@ test('each lean helper names its own model and never pairs web tools with local 
     const list = tools.split(/,\s*/);
     const web = list.some((t) => t.startsWith('Web'));
     assert.ok(!(web && list.some((t) => ['Read', 'Grep', 'Glob', 'Edit', 'Write', 'Bash'].includes(t))), `${file} has web tools and local tools`);
+  }
+});
+
+test('Wavecheck has its six steps, and every helper it sends only reads', () => {
+  const page = text('skills/fewturns/WAVECHECK.md');
+  assert.ok(text('skills/fewturns/SKILL.md').includes('](WAVECHECK.md)'), 'SKILL.md does not link WAVECHECK.md');
+  assert.deepEqual(page.match(/^\d\. \*\*/gm), ['1. **', '2. **', '3. **', '4. **', '5. **', '6. **']);
+  const tools = Object.fromEntries([...text('skills/fewturns/HELPERS.md').replace(/\r\n/g, '\n').matchAll(/^### (\S+)\.md\n\n````markdown\n([\s\S]*?)^````$/gm)]
+    .map(([, name, body]) => [name, frontmatter(body).tools.split(/,\s*/)]));
+  assert.equal(Object.keys(tools).length, 4, 'HELPERS.md should define four helpers');
+  const writes = (name) => tools[name].some((t) => !['Read', 'Grep', 'Glob', 'WebFetch', 'WebSearch'].includes(t));
+  for (const line of page.split('\n')) {
+    for (const [, name] of line.matchAll(/`([\w-]+)`/g)) {
+      if (name in tools && writes(name)) assert.match(line, /^\s*- Never/, `WAVECHECK.md sends ${name}, which can write: ${line.trim().slice(0, 80)}`);
+    }
   }
 });
 

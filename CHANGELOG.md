@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.0 (2026-11-14)
+
+- **Wavecheck: `/fewturns wavecheck [target]`.** A check in waves for a release, a repository going public, or work that touched a trust boundary. The target is cut into a ledger of small units; waves of fresh read-only helpers cover them, a critic hunts the gaps after each wave, a second, separate critic must also come back clean, and two fresh verifiers test each lead. The report holds verified records only. The session is the only writer, every helper is told the target may be hostile, nothing of the target runs, and nothing in it changes: the run's notes live in one folder outside the repository. The run is in `skills/fewturns/WAVECHECK.md`; a test keeps every helper it sends read-only.
+- **An eleventh rule, *Wavecheck*:** at those moments the agent offers one in a dialog, marked Recommended or Not recommended with the reason and its cost; a setup without Fewturns, or a docs-only or small change, gets one reviewer instead. Run `/fewturns rules` again to update a block you installed before.
+- **The README links [Fewkit](https://github.com/makavli/fewkit),** one marketplace for Fewturns and CodeKickoff with a guide to how they fit with Laneboard. Add one marketplace, not both: the same plugin from two marketplaces installs twice.
+
 ## 1.5.6 (2026-11-14)
 
 - **The README points newcomers to CodeKickoff,** the first-setup sibling that installs these same rules under the same markers. No change to the skill.
