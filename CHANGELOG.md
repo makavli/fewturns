@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.9 (2026-11-15)
+
+- **`audit owner/repo` no longer calls code it never read "fine".** A plugin whose `source` points outside the repository (another repository, a URL, a package, a path that leaves it), and a GitHub tree listing marked `truncated`, each count as a file that runs and is not read, so the verdict is never "fine" while they stand; an outside source's link is named so it can be audited next. Files a hook script loads or starts are read with it.
+- **The trust check checks the scout before using it.** A hook or server script sent to the read-only helper goes only to a `scout` whose every loadable `scout.md` passes the same check as in `audit owner/repo`: a project's own `scout.md` can no longer hand that script to a helper with more tools.
+- **A test keeps Fewturns free of MCP servers,** as it already did of hooks: no `hooks` or `mcpServers` in the manifest or its marketplace entry, and no `.mcp.json`.
+
 ## 1.5.8 (2026-11-15)
 
 - **A listing icon for Anthropic's plugin directory:** `.claude-plugin/icon.png`, a 512 px picture of Fewturns' three shrinking grip rings. It is the only binary file in the repository, and a test checks that it is a square PNG with no text chunk. Nothing else changed.
