@@ -39,7 +39,16 @@ export const RISKS = [
   ['sets something to run at login or on a schedule', />>?\s*["']?(~|\$HOME)?[\\/]?\.(bashrc|zshrc|bash_profile|profile)\b|\bcrontab\b(?!\s+-l)|\bschtasks\b|\blaunchctl\s+load\b|CurrentVersion[\\/]Run\b/i],
   ['can delete your home folder or more', /\brm\s+(?:-{1,2}[\w-]{1,20}\s+){0,4}?(?:-[a-z]{0,5}r[a-z]{0,5}|--recursive)\s+(?:-{1,2}[\w-]{1,20}\s+){0,4}["']?(?:~|\$\{?HOME\}?|\/)\/?\*?["']?(?=[\s;&|)]|$)|\bRemove-Item\b(?=[^\n;|]{0,200}\s-Recurse\b)[^\n;|]{0,200}?\s["']?(?:~|\$HOME|\$env:USERPROFILE|[a-z]:)[\\/]?\*?["']?(?=[\s;|]|$)/i],
 ];
-const RUNNERS = ['npx', 'bunx', 'pnpx', 'uvx']; // start the newest published version of a package unless one is named
+const RUNNERS = ['npx', 'bunx', 'pnpx', 'uvx', 'deno']; // start the newest published version of a package unless one is named
+// The same, as a subcommand. A Map: a name read from a file (`constructor`) must not reach Object's own keys.
+const VIA = new Map([['npm', ['exec', 'x']], ['pnpm', ['dlx']], ['yarn', ['dlx']], ['pipx', ['run']], ['bun', ['x']], ['deno', ['run']]]);
+const SHELLS = ['cmd', 'sh', 'bash', 'zsh', 'pwsh', 'powershell'];
+// Settings that run a command of their own, besides hooks, and what for.
+const COMMANDS = [['apiKeyHelper', 'to hand over your API key'], ['statusLine.command', 'to draw the status line'], ['awsAuthRefresh', 'to sign in to AWS'], ['awsCredentialExport', 'to export AWS credentials'], ['otelHeadersHelper', 'to make telemetry headers']];
+// An allow rule for one of these, with any arguments, is as wide as allowing every command.
+// A path before it, a version after it (python3.12), and flags or a runner's subcommand (bash -c, npm exec) count too.
+const WIDE = /^Bash\(\s*(?:sudo\s+)?(?:[\w.~:-]{0,80}[\\/]){0,20}([\w.-]{1,40}?)(?:\.(?:exe|cmd|bat))?((?:\s+[\w-]{1,20}){0,3}?)(?::\*|\s+\*|\*)\s*\)$/i;
+const OPEN = new Set(['sh', 'bash', 'zsh', 'dash', 'fish', 'cmd', 'pwsh', 'powershell', 'node', 'deno', 'bun', 'python', 'python3', 'py', 'ruby', 'perl', 'php', 'curl', 'wget', 'iwr', 'irm', 'npx', 'bunx', 'pnpx', 'uvx', 'env', 'xargs', 'exec', 'sudo']); // shortcut: the shell built-in that runs text is left out, as the read-only test bans its name; add it if that test learns strings from code
 // Past these sizes a hook is named for a person to read, not matched: few hand-written hooks come near them.
 const SCAN_COMMAND = 10_000;
 const SCAN_SCRIPT = 2 * 1024 * 1024;
@@ -158,16 +167,28 @@ function mcpRisk(def) {
     return `connects to ${host === '(unusual value)' ? 'a remote host' : host}: what you send it leaves this machine`;
   }
   const tool = (v) => String(v ?? '').split(/[\\/]/).pop().replace(/\.(cmd|exe)$/i, '').toLowerCase();
-  let runner = tool(def?.command);
-  let args = asList(def?.args).filter((a) => typeof a === 'string');
-  if (runner === 'cmd') { // Windows: cmd /c npx -y <package>
-    const i = args.findIndex((a) => RUNNERS.includes(tool(a)));
-    if (i >= 0) [runner, args] = [tool(args[i]), args.slice(i + 1)];
+  if (typeof def?.command !== 'string') return null;
+  // The package a runner at words[i] starts without a version, or null.
+  const fresh = (words, i) => {
+    let runner = tool(words[i]);
+    if (VIA.get(runner)?.includes(words[i + 1])) [runner, i] = [runner === 'deno' ? 'deno' : 'npx', i + 1];
+    if (!RUNNERS.includes(runner)) return null;
+    let j = i + 1;
+    while (j < words.length && words[j].startsWith('-')) j++;
+    const pkg = words[j];
+    // deno runs what it is given; only an address or a registry name is fetched at start.
+    if (!pkg || (runner === 'deno' && !/^(https?:|npm:|jsr:)/.test(pkg))) return null;
+    return /^(npm:|jsr:)?(@[^/@]+\/)?[^@=]+(@|==)\d/.test(pkg) ? null : pkg;
+  };
+  const words = [def.command, ...asList(def.args).filter((a) => typeof a === 'string')];
+  // Behind a shell any word can start one: cmd /c npx -y <package>, bash -c "npm i && npx -y <package>".
+  const shell = SHELLS.includes(tool(def.command));
+  const split = shell ? words.flatMap((a) => a.split(/\s+/)).filter(Boolean) : words;
+  for (let i = 0; i < (shell ? split.length : 1); i++) {
+    const pkg = fresh(split, i);
+    if (pkg) return `runs the newest version of ${label(pkg)} at every start`;
   }
-  if ((runner === 'pnpm' && args[0] === 'dlx') || (runner === 'pipx' && args[0] === 'run')) [runner, args] = ['npx', args.slice(1)];
-  if (!RUNNERS.includes(runner)) return null;
-  const pkg = args.find((a) => !a.startsWith('-'));
-  return pkg && !/^(@[^/@]+\/)?[^@=]+(@|==)\d/.test(pkg) ? `runs the newest version of ${label(pkg)} at every start` : null;
+  return null;
 }
 
 // Where a marketplace's plugins update from.
@@ -203,7 +224,7 @@ function pluginSource(id, root) {
   let mcpUnread = 0;
   for (const spec of specs('mcpServers', '.mcp.json')) {
     const config = typeof spec === 'string' ? readJson(under(spec)) : spec;
-    const defs = obj(config?.mcpServers) ?? obj(config);
+    const defs = obj(config) && 'mcpServers' in config ? obj(config.mcpServers) : obj(config); // a list there is not read
     if (defs) servers.push(...Object.entries(defs));
     else if (spec !== '.mcp.json' || fileSize(under(spec)) !== null) mcpUnread++;
   }
@@ -326,7 +347,7 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
   // Claude Code keys a project by its path, written with forward slashes on Windows too.
   const projectEntry = userMcp?.projects?.[project] ?? userMcp?.projects?.[project.split('\\').join('/')];
   const mcpSets = [['~/.claude.json', userMcp?.mcpServers], ['~/.claude.json (this project)', projectEntry?.mcpServers], ['.mcp.json', readJson(join(project, '.mcp.json'))?.mcpServers]]
-    .map(([where, defs]) => [where, obj(defs) ?? {}]);
+    .map(([where, defs]) => [where, obj(defs) ?? {}, defs != null && !obj(defs)]);
   const mcpServers = mcpSets.reduce((sum, [, defs]) => sum + Object.keys(defs).length, 0) + on.reduce((sum, s) => sum + s.mcp, 0);
 
   // What deserves a look before you rely on it: hooks and the scripts they name, MCP servers, settings.
@@ -371,13 +392,18 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
     if (s.mcpUnread) flag(`plugin ${label(s.id)}`, 'has an MCP server file the check cannot read: read it before you rely on it');
     if (s.hooksUnread) flag(`plugin ${label(s.id)}`, 'has a hooks file the check cannot read: read it before you rely on it');
   }
-  for (const [where, defs] of mcpSets) servers(where, Object.entries(defs));
+  for (const [where, defs, unread] of mcpSets) {
+    servers(where, Object.entries(defs));
+    if (unread) flag(where, 'has an MCP server list the check cannot read: read it before you rely on it');
+  }
   const settingsNames = ['~/.claude/settings.json', '.claude/settings.json', '.claude/settings.local.json'];
   layers.forEach((layer, i) => {
     if (!layer) return;
     const where = `settings ${settingsNames[i]}`;
     const commands = hookCommands(layer.hooks);
     scan(where, commands, null);
+    const own = COMMANDS.map(([key, why]) => [key, key.split('.').reduce((o, k) => o?.[k], layer), why]).filter(([, c]) => typeof c === 'string' && c.trim());
+    scan(where, own.map(([, c]) => c), null, 'settings command');
     if (typeof layer.env?.ANTHROPIC_BASE_URL === 'string' && layer.env.ANTHROPIC_BASE_URL.trim()) { // empty = not set
       const host = hostOf(layer.env.ANTHROPIC_BASE_URL);
       const to = plain(host);
@@ -389,7 +415,28 @@ export function audit({ home = homedir(), project = process.cwd(), window = 2000
     if (i === 0) return; // the rest is about a project's own files, which arrive with a clone
     const it = commands.length === 1 ? 'it' : 'them';
     if (commands.length) flag(where, `runs ${commands.length} command${commands.length === 1 ? '' : 's'} on your machine as hooks: read ${it} unless you wrote ${it}`);
-    if (asList(layer.permissions?.allow).some((r) => /^Bash(\((\*|\*\*|:\*)\))?$/.test(String(r)))) flag(where, 'lets Claude run any command without asking');
+    const allow = asList(layer.permissions?.allow).map(String);
+    if (allow.some((r) => /^Bash(\((\*|\*\*|:\*)\))?$/.test(r))) flag(where, 'lets Claude run any command without asking');
+    for (const r of allow) {
+      const m = r.length <= 300 ? WIDE.exec(r) : null;
+      if (!m) continue;
+      const name = m[1].toLowerCase();
+      const base = name.replace(/\d+(\.\d+)*$/, '');
+      const words = m[2].split(/\s+/).filter(Boolean);
+      const flags = (from) => words.slice(from).every((w) => w.startsWith('-'));
+      if ((OPEN.has(base) && flags(0)) || (VIA.get(base)?.includes(words[0]) && flags(1))) flag(where, `lets Claude run ${[name, ...words].join(' ')} with any arguments without asking: enough to run or send anything`);
+    }
+    for (const [key, , why] of own) if (key !== 'apiKeyHelper') flag(where, `runs a command on your machine ${why}: read it unless you wrote it`); // apiKeyHelper is named above
+    // A project can add a marketplace and turn its plugins on; Claude Code then offers to install them.
+    const turnedOn = new Map(); // plugins turned on, per marketplace, counted once
+    for (const [id, v] of Object.entries(obj(layer.enabledPlugins) ?? {})) {
+      const market = id.includes('@') ? id.slice(id.lastIndexOf('@') + 1) : null;
+      if (v === true && market !== null) turnedOn.set(market, (turnedOn.get(market) ?? 0) + 1);
+    }
+    for (const [name, entry] of Object.entries(obj(layer.extraKnownMarketplaces) ?? {})) {
+      const count = turnedOn.get(name) ?? 0;
+      flag(where, `adds the plugin marketplace ${label(name)} (${originOf(obj(entry)?.source)})${count ? ` and turns on ${count} of its plugins` : ''}: plugins can run code on your machine, so read them before you install`);
+    }
   });
   const markets = obj(readJson(join(claude, 'plugins', 'known_marketplaces.json'))) ?? {};
   const origins = [...new Set(plugins.map((s) => s.id.split('@').pop()))]

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.10 (2026-11-15)
+
+- **The trust check reads the settings that run a command of their own.** `statusLine`, `awsAuthRefresh`, `awsCredentialExport`, `otelHeadersHelper` and `apiKeyHelper` are checked by pattern in every settings file, and the scripts they name join the full-read list; a project's settings that set one get a line of their own.
+- **A project that allows a shell, an interpreter, a downloader or a package runner with any arguments is named,** such as `Bash(curl:*)`, `Bash(python3.12 *)`, `Bash(/usr/bin/python:*)`, `Bash(bash -c:*)` or `Bash(npm exec:*)`: as wide as allowing every command. Narrow rules such as `Bash(npm run test:*)` stay quiet.
+- **A project that adds a plugin marketplace is named,** with where it comes from and how many of its plugins the project turns on.
+- **More runners count as "the newest version at every start":** `npm exec`, `yarn dlx`, `bun x`, `deno run <address>`, and any of them anywhere behind `bash -c` or another shell (`npm install && npx -y <package>`). A pinned version (`jsr:@scope/pkg@1.0.0` too) stays quiet.
+- **An MCP server list the check cannot read is named,** instead of being counted as no servers (top-level) or as one server called `mcpServers` (a plugin's file).
+
 ## 1.5.9 (2026-11-15)
 
 - **`audit owner/repo` no longer calls code it never read "fine".** A plugin whose `source` points outside the repository (another repository, a URL, a package, a path that leaves it), and a GitHub tree listing marked `truncated`, each count as a file that runs and is not read, so the verdict is never "fine" while they stand; an outside source's link is named so it can be audited next. Files a hook script loads or starts are read with it.
