@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/makavli/fewturns/actions/workflows/test.yml"><img src="https://github.com/makavli/fewturns/actions/workflows/test.yml/badge.svg?branch=main" alt="Tests"></a>
-  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.9-111111?style=flat-square" alt="Release v1.5.9"></a>
+  <a href="https://github.com/makavli/fewturns/releases/latest"><img src="https://img.shields.io/badge/release-v1.5.10-111111?style=flat-square" alt="Release v1.5.10"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/dependencies-0-111111?style=flat-square" alt="No dependencies">
   <img src="https://img.shields.io/badge/hooks-0-111111?style=flat-square" alt="No hooks">
@@ -138,7 +138,7 @@ npx skills add makavli/fewturns -g
 **What you get is a release.** Every merge into `main` is published as a release, so `main` and the latest release are always the same thing, and each route above installs it. To stay on one version, name it:
 
 ```text
-/plugin marketplace add makavli/fewturns#v1.5.9
+/plugin marketplace add makavli/fewturns#v1.5.10
 ```
 
 **To update:** in Claude Code, `/plugin marketplace update fewturns`, then pick **Update now** for Fewturns on the Installed tab of `/plugin` (or, in a terminal, `claude plugin update fewturns@fewturns`), and restart. With the skills CLI, run the same `npx skills add` again. By hand, copy the folder again.
@@ -214,7 +214,7 @@ A skill is text you can read before you install it. What runs is another matter:
 - something set to run at login or on a schedule, or a delete aimed at your home folder;
 - an MCP server that runs the newest version of a package at every start, or that connects to another host;
 - a setting that sends your requests to a server that is not Anthropic's, hands over your key, or lets Claude run every command without asking;
-- a project you cloned that grants itself hooks or every shell command;
+- a project you cloned that grants itself hooks, every shell command, a shell or interpreter with any arguments, a command of its own (a status line, an AWS or telemetry helper), or a plugin marketplace;
 - a hook command or script too long to check by pattern.
 
 Its last line says where each plugin in use updates from: whoever controls that repository can change what runs on your machine at the next update.
