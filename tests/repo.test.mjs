@@ -23,6 +23,8 @@ function files(dir = root, out = []) {
   return out;
 }
 const all = files();
+// Anthropic's directory takes the listing icon from here: the one binary, checked like a picture.
+const ICON = '.claude-plugin/icon.png';
 
 test('one version everywhere', () => {
   const { version } = json('package.json');
@@ -95,16 +97,31 @@ test('relative links and images resolve', () => {
 
 test('no machine left a trace: no home folders, addresses, e-mails or keys', () => {
   const traces = /[A-Z]:[\\/]Users[\\/]|\/home\/[a-z]|\/Users\/[a-z]|AppData|[\w.+-]+@[\w-]+\.[a-z]{2,}|\b\d{1,3}(\.\d{1,3}){3}\b|gh[pos]_[A-Za-z0-9]{20,}|BEGIN [A-Z ]*PRIVATE KEY/;
-  for (const file of all.filter((f) => f !== 'tests/repo.test.mjs')) { // this file holds the pattern itself
+  for (const file of all.filter((f) => f !== 'tests/repo.test.mjs' && f !== ICON)) { // this file holds the pattern itself
     for (const line of text(file).split('\n')) {
       assert.ok(!traces.test(line), `${file}: ${line.trim().slice(0, 120)}`);
     }
   }
 });
 
-test('only text ships: no binaries, nothing over 200 kB', () => {
+test('the listing icon is a square PNG of 512 to 2048 px, image chunks only', () => {
+  const b = readFileSync(join(root, ICON));
+  assert.equal(b.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${ICON} is not a PNG`);
+  const [w, h] = [b.readUInt32BE(16), b.readUInt32BE(20)];
+  assert.ok(w === h && w >= 512 && w <= 2048, `${ICON} is ${w}x${h}`);
+  // Only image chunks: anything else (tIME, iCCP, tEXt, an editor's private chunk) could carry data.
+  const image = ['IHDR', 'PLTE', 'IDAT', 'IEND', 'sRGB', 'gAMA', 'cHRM', 'pHYs', 'tRNS', 'sBIT', 'bKGD'];
+  const types = [];
+  let i = 8;
+  while (i < b.length) { types.push(b.toString('latin1', i + 4, i + 8)); i += 12 + b.readUInt32BE(i); }
+  assert.equal(i, b.length, `${ICON} has bytes past its last chunk`);
+  assert.ok(types[0] === 'IHDR' && types.at(-1) === 'IEND', `${ICON} does not run from IHDR to IEND`);
+  assert.deepEqual(types.filter((t) => !image.includes(t)), [], `${ICON} carries a chunk that is not image data`);
+});
+
+test('only text ships, besides the listing icon: nothing over 200 kB', () => {
   for (const file of all) {
-    assert.match(file, /\.(md|mjs|json|ya?ml|svg)$|^(LICENSE|\.gitignore|\.gitattributes|\.editorconfig)$/, `unexpected file type: ${file}`);
+    if (file !== ICON) assert.match(file, /\.(md|mjs|json|ya?ml|svg)$|^(LICENSE|\.gitignore|\.gitattributes|\.editorconfig)$/, `unexpected file type: ${file}`);
     assert.ok(statSync(join(root, file)).size < 200_000, `${file} is too large`);
   }
 });
