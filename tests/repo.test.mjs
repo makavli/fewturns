@@ -41,7 +41,11 @@ test('the plugin and its marketplace describe the same plugin', () => {
   assert.equal(market.plugins.length, 1);
   assert.equal(market.plugins[0].name, plugin.name);
   assert.equal(market.plugins[0].source, './');
-  assert.ok(!('hooks' in plugin) && !existsSync(join(root, 'hooks')), 'Fewturns ships no hooks');
+  for (const manifest of [plugin, market.plugins[0]]) {
+    assert.ok(!('hooks' in manifest) && !('mcpServers' in manifest), 'a manifest names hooks or MCP servers');
+  }
+  assert.ok(!existsSync(join(root, 'hooks')), 'Fewturns ships no hooks');
+  assert.ok(!existsSync(join(root, '.mcp.json')), 'Fewturns ships no MCP server');
 });
 
 test('one skill, and its header practises what it asks of others', () => {
