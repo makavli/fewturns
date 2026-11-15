@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.8 (2026-11-15)
+
+- **A listing icon for Anthropic's plugin directory:** `.claude-plugin/icon.png`, a 512 px picture of Fewturns' three shrinking grip rings. It is the only binary file in the repository, and a test checks that it is a square PNG with no text chunk. Nothing else changed.
+
 ## 1.5.7 (2026-11-14)
 
 - **The worker and the reviewer treat what they read as data,** as the two scouts already did: text in a file that tells them to do something is reported, never followed. The reviewer also answers in the shape a brief gives it. A test keeps the rule in all four helpers.
