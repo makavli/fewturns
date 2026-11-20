@@ -12,9 +12,11 @@ on:
 permissions:
   contents: read
 
+# A pull request's new push cancels its older run. A run on main publishes a release, and a group keeps only one
+# pending run, so each commit on main gets its own group: no merge is ever skipped. A manual run stands alone.
 concurrency:
-  group: test-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }} # a run on main publishes a release: let it finish
+  group: test-${{ github.event_name == 'pull_request' && github.ref || github.event_name == 'push' && github.sha || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -67,6 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     permissions:
+      contents: read # to ask which commit is main's head
       issues: write
       pull-requests: write
     steps:
@@ -82,7 +85,10 @@ jobs:
           if [ -n "$PR" ]; then title="Checks failed on pull request #$PR"; else title="Checks failed on main"; fi
           issue="$(gh api "repos/$GH_REPO/issues?state=open&labels=ci-failure&per_page=100" --jq ".[] | select(.pull_request == null and .title == \"$title\") | .number" | head -n 1)"
           if [ "$RESULT" = "success" ]; then
-            if [ -n "$issue" ]; then gh issue close "$issue" --comment "Fixed: the checks on ${SHA:0:7} are green. $RUN"; fi
+            [ -n "$issue" ] || exit 0
+            # On main only the head's run may close it: an older commit can turn green after a newer one went red.
+            if [ -z "$PR" ] && [ "$(gh api "repos/$GH_REPO/commits/main" --jq .sha)" != "$SHA" ]; then exit 0; fi
+            gh issue close "$issue" --comment "Fixed: the checks on ${SHA:0:7} are green. $RUN"
             exit 0
           fi
           if [ -n "$issue" ]; then
@@ -125,9 +131,14 @@ jobs:
             echo "::error::package.json holds an unexpected version: $version"
             exit 1
           fi
-          if gh release view "v$version" > /dev/null 2>&1; then
+          draft="$(gh release view "v$version" --json isDraft --jq .isDraft 2> /dev/null || true)"
+          if [ "$draft" = "false" ]; then
             echo "v$version is already published: nothing to do."
             exit 0
           fi
+          if [ "$draft" = "true" ]; then gh release delete "v$version" --yes; fi # a draft left by a killed run
+          # Runs on main can finish out of order: only the head's release becomes Latest.
+          latest=false
+          if [ "$(gh api "repos/$GH_REPO/commits/main" --jq .sha)" = "$GITHUB_SHA" ]; then latest=true; fi
           node tools/release-notes.mjs > "$RUNNER_TEMP/notes.md"
-          gh release create "v$version" --target "$GITHUB_SHA" --title "Fewturns $version" --notes-file "$RUNNER_TEMP/notes.md" --latest
+          gh release create "v$version" --target "$GITHUB_SHA" --title "Fewturns $version" --notes-file "$RUNNER_TEMP/notes.md" --latest="$latest"
