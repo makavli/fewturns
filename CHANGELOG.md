@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.11 (2026-11-20)
+
+- **No merge into main goes unreleased.** Each commit on main now runs in its own group, so two quick merges no longer drop the waiting run of the first one; only a pull request's new push cancels its older run.
+- **Only main's head becomes Latest,** when the runs of two merges finish out of order, and a draft release left by a killed run is replaced instead of blocking the version.
+- **An older commit turning green no longer closes main's issue** while the head is still red.
+
 ## 1.5.10 (2026-11-15)
 
 - **The trust check reads the settings that run a command of their own.** `statusLine`, `awsAuthRefresh`, `awsCredentialExport`, `otelHeadersHelper` and `apiKeyHelper` are checked by pattern in every settings file, and the scripts they name join the full-read list; a project's settings that set one get a line of their own.
