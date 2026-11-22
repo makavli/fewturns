@@ -2,7 +2,7 @@
 
 ## 1.6.0 (2026-11-22)
 
-- **Three working rules that close the loop.** *Green first:* before a block of work, write down the check that can go red and must pass; "should pass" is not green. *Two strikes:* the same failure twice ends the attempt and the agent says what is missing instead of trying a third time; work that passed stays as it is. *Lessons become checks:* a mistake that can come back becomes a script, a test, a permission rule or a hook, and a memory note only when none fits. The block now holds thirteen rules.
+- **Three working rules that close the loop.** *Green first:* before a block of work, write down the check that can go red and must pass; "should pass" is not green. *Two strikes:* the same failure twice ends the attempt and the agent says what is missing instead of trying a third time; work that passed stays as it is. *Lessons become checks:* a mistake that can come back becomes a script, a test or a permission rule, and a memory note only when none fits. The block now holds thirteen rules.
 
 ## 1.5.11 (2026-11-20)
 

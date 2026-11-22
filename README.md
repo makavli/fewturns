@@ -52,11 +52,11 @@ The part in colour is yours. Most of it arrived one install at a time and nobody
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/before-after-dark.svg">
-    <img src="assets/before-after-light.svg" width="880" alt="The fixed load on every request for a made-up setup with three plugins. Before: about 6,278 tokens. After /fewturns trim: about 4,435 tokens, the working rules included. Hooks on every prompt or tool call go from 6 to 0, MCP servers from 2 to 0, and skill descriptions are no longer cut short to fit their budget.">
+    <img src="assets/before-after-light.svg" width="880" alt="The fixed load on every request for a made-up setup with three plugins. Before: about 6,278 tokens. After /fewturns trim: about 4,433 tokens, the working rules included. Hooks on every prompt or tool call go from 6 to 0, MCP servers from 2 to 0, and skill descriptions are no longer cut short to fit their budget.">
   </picture>
 </p>
 
-This is the setup the tests use: three plugins, a few personal skills, eight synced ones. Its fixed load goes from about **6,278** to about **4,435** tokens on every request, its hooks go, and so do both lines of its TRUST section. Its skill descriptions stop being cut short. The "after" side counts the working rules Fewturns installs: they cost a little on every request, to save whole requests.
+This is the setup the tests use: three plugins, a few personal skills, eight synced ones. Its fixed load goes from about **6,278** to about **4,433** tokens on every request, its hooks go, and so do both lines of its TRUST section. Its skill descriptions stop being cut short. The "after" side counts the working rules Fewturns installs: they cost a little on every request, to save whole requests.
 
 It is an estimate of a made-up setup, not a benchmark, and your numbers will differ. Run `node tools/demo.mjs` to reproduce it, and `/fewturns` to see your own.
 
@@ -191,7 +191,7 @@ This is the block `/fewturns rules` installs, in full. It is short on purpose: i
 > - **Batch.** Send independent reads, searches and commands in one message. Report once, briefly.
 > - **Clean up.** Stop each background task, monitor or scheduled job as soon as its news has arrived. Schedule a check only on request: one job, at the pace the watched thing changes, deleting itself when done.
 > - **A tool beats a one-liner.** A check worth running twice becomes a small script in the repository, run as one command.
-> - **Lessons become checks.** A mistake that can come back becomes a check (a script, a test) or a permission rule or hook that refuses it; a memory note holds it only when neither fits. A note is advice the next session may skip; a check runs every time.
+> - **Lessons become checks.** A mistake that can come back becomes a check (a script, a test) or a permission rule that refuses it; a memory note holds it only when neither fits. A note is advice the next session may skip; a check runs every time.
 > - **Helpers that pay.** Hand a subagent a bounded job that would flood this context: a wide search, a review of a finished diff, an audit. On every call, name the smallest model that can do the job: a built-in helper may otherwise run on this session's model. As few helpers as the job needs, one shared brief, a short report, one writer per file. A small job stays inline, and so does work that needs the machine to itself (a build, an editor, a render).
 > - **Skills by need.** Load and run the skill the task calls for, never apply one from memory; name the ones used in one line.
 > - **Local first.** Test on this machine; let CI run to publish.
