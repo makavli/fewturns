@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (2026-11-22)
+
+- **Three working rules that close the loop.** *Green first:* before a block of work, write down the check that can go red and must pass; "should pass" is not green. *Two strikes:* the same failure twice ends the attempt and the agent says what is missing instead of trying a third time; work that passed stays as it is. *Lessons become checks:* a mistake that can come back becomes a script, a test or a permission rule, and a memory note only when none fits. The block now holds thirteen rules.
+
 ## 1.5.11 (2026-11-20)
 
 - **No merge into main goes unreleased.** Each commit on main now runs in its own group, so two quick merges no longer drop the waiting run of the first one; only a pull request's new push cancels its older run.

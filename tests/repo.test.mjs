@@ -64,7 +64,7 @@ test('the rules block has its two markers, once each', () => {
 
 test('the README quotes the rules as RULES.md has them', () => {
   const rules = text('skills/fewturns/RULES.md').split('<!-- fewturns:start -->')[1].split('<!-- fewturns:end -->')[0].split(/\r?\n/).filter((l) => l.startsWith('- '));
-  assert.equal(rules.length, 10);
+  assert.equal(rules.length, 13);
   const readme = text('README.md').split(/\r?\n/);
   for (const rule of rules) assert.ok(readme.includes(`> ${rule}`), `README differs on: ${rule.slice(0, 40)}`);
 });

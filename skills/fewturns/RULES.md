@@ -10,9 +10,12 @@ The block below goes into the user's instruction file, markers included. It is t
 - **Batch.** Send independent reads, searches and commands in one message. Report once, briefly.
 - **Clean up.** Stop each background task, monitor or scheduled job as soon as its news has arrived. Schedule a check only on request: one job, at the pace the watched thing changes, deleting itself when done.
 - **A tool beats a one-liner.** A check worth running twice becomes a small script in the repository, run as one command.
+- **Lessons become checks.** A mistake that can come back becomes a check (a script, a test) or a permission rule that refuses it; a memory note holds it only when neither fits. A note is advice the next session may skip; a check runs every time.
 - **Helpers that pay.** Hand a subagent a bounded job that would flood this context: a wide search, a review of a finished diff, an audit. On every call, name the smallest model that can do the job: a built-in helper may otherwise run on this session's model. As few helpers as the job needs, one shared brief, a short report, one writer per file. A small job stays inline, and so does work that needs the machine to itself (a build, an editor, a render).
 - **Skills by need.** Load and run the skill the task calls for, never apply one from memory; name the ones used in one line.
 - **Local first.** Test on this machine; let CI run to publish.
+- **Green first.** Before a block of work, write down what green means: a check that can go red (tests exit 0, a build, a schema; for a bug, a new test seen red on the old code). "Should pass" is not green; the rework it hides costs more requests than the check.
+- **Two strikes.** The same failure twice ends the attempt: stop, say what is missing (a tool, a fact, a framing) and ask; a third try buys nothing. Work that passed its check stays as it is; only the failed piece runs again.
 - **Lean index.** Always-loaded files (this one, the memory index) hold short pointers; status and history live in the file a pointer names. A handoff page read at every start holds the state now: each update rewrites it and drops what is no longer true.
 - **Cost shapes the plan.** It is a reason to take fewer steps, never to stop: name a large cost once, then carry on.
 <!-- fewturns:end -->
