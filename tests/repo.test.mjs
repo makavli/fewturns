@@ -64,9 +64,17 @@ test('the rules block has its two markers, once each', () => {
 
 test('the README quotes the rules as RULES.md has them', () => {
   const rules = text('skills/fewturns/RULES.md').split('<!-- fewturns:start -->')[1].split('<!-- fewturns:end -->')[0].split(/\r?\n/).filter((l) => l.startsWith('- '));
-  assert.equal(rules.length, 13);
+  assert.equal(rules.length, 14);
   const readme = text('README.md').split(/\r?\n/);
   for (const rule of rules) assert.ok(readme.includes(`> ${rule}`), `README differs on: ${rule.slice(0, 40)}`);
+});
+
+test('the loop rules keep their parts: a budget, a red run told in four parts, gates priced by undo', () => {
+  const block = text('skills/fewturns/RULES.md').split('<!-- fewturns:start -->')[1].split('<!-- fewturns:end -->')[0];
+  const rule = (name) => block.split(/\r?\n/).find((l) => l.startsWith(`- **${name}.**`)) ?? '';
+  assert.match(rule('Green first'), /budget/);
+  for (const part of ['EXPECTED', 'SAW', 'FENCE', 'DEAD ENDS', 'budget']) assert.ok(rule('Two strikes').includes(part), `Two strikes names ${part}`);
+  assert.match(rule('Gates by undo'), /revert[\s\S]*green[\s\S]*fresh context[\s\S]*cannot be undone[\s\S]*yes/);
 });
 
 test('every lever the script reads is explained in LEVERS.md', () => {

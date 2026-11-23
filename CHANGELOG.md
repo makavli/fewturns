@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0 (2026-11-23)
+
+- **A loop with exits, and gates priced by undo.** *Green first* now names a budget in runs or time beside the check. *Two strikes* tells a red run in four parts (EXPECTED, SAW, FENCE, DEAD ENDS) and ends the attempt on the same SAW twice or on a spent budget. *Gates by undo*, new: a step a revert undoes goes ahead on green, one that touches what others build on also needs its output read back and a review in a fresh context, and one that cannot be undone (a merge others pull, a deploy, a delete, a payment, a publish) waits for the user's yes. The block now holds fourteen rules, about 193 tokens more on every request in the demo setup. A test keeps each part in its rule.
+
 ## 1.6.0 (2026-11-22)
 
 - **Three working rules that close the loop.** *Green first:* before a block of work, write down the check that can go red and must pass; "should pass" is not green. *Two strikes:* the same failure twice ends the attempt and the agent says what is missing instead of trying a third time; work that passed stays as it is. *Lessons become checks:* a mistake that can come back becomes a script, a test or a permission rule, and a memory note only when none fits. The block now holds thirteen rules.
